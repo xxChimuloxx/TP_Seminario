@@ -2,6 +2,9 @@ package Vista;
 
 import javax.swing.*;
 
+/**
+ * Clase que se utiliza para la gestion centralizada de dialogos del sistema.
+ */
 public class Dialogos {
 
     /**

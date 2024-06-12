@@ -30,7 +30,11 @@ public class CodigoQR {
     public static int CONSTANTE_TIPO_CAMPANIA = 2;
     public static int CONSTANTE_TIPO_ITEM = 3;
 
-
+    /**
+     * Registra un codigo QR con una clave y un tipo asignado.
+     * @param clave
+     * @param tipo
+     */
     public static void registrarQR(int clave, int tipo){
         String consulta="SELECT * FROM mydb.codigosqr WHERE `Tipo`="+tipo+" and `ID Objeto`="+clave;
 
@@ -62,7 +66,7 @@ public class CodigoQR {
      * @throws WriterException
      * @throws IOException
      */
-    public static void generarQRCodeImage(String text, int width, int height, String filePath)
+    public static void generarQRCodeImageAndDownload(String text, int width, int height, String filePath)
             throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         Map<EncodeHintType, String> hints = new HashMap<>();
@@ -74,21 +78,6 @@ public class CodigoQR {
     }
 
     /**
-     * Ejemplo de ejecucion. Para depuracion y control
-     * @param args
-     */
-    public static void main(String[] args) {
-        try {
-            generarQRCodeImage("https://www.example1.com", 350, 350, "qrCode.png");
-            System.out.println("Código QR generado con éxito.");
-        } catch (WriterException e) {
-            System.err.println("Error al generar el código QR: " + e.getMessage());
-        } catch (IOException e) {
-            System.err.println("Error al escribir el archivo de imagen: " + e.getMessage());
-        }
-    }
-
-    /**
      * genera codigo QR con el texto que se le pasa como parametro del tamaño NxM informado
      * @param text
      * @param width
@@ -97,12 +86,27 @@ public class CodigoQR {
      * @throws WriterException
      * @throws IOException
      */
-    public static BufferedImage generarCodeImage(String text, int width, int height) throws WriterException, IOException {
+    public static BufferedImage generarQRCodeImage(String text, int width, int height) throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         Map<EncodeHintType, String> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height, hints);
         return MatrixToImageWriter.toBufferedImage(bitMatrix);
+    }
+
+    /**
+     * Ejemplo de ejecucion. Para depuracion y control
+     * @param args
+     */
+    public static void main(String[] args) {
+        try {
+            generarQRCodeImageAndDownload("https://www.example1.com", 350, 350, "qrCode.png");
+            System.out.println("Código QR generado con éxito.");
+        } catch (WriterException e) {
+            System.err.println("Error al generar el código QR: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error al escribir el archivo de imagen: " + e.getMessage());
+        }
     }
 
     /**
@@ -277,5 +281,73 @@ public class CodigoQR {
             File fileToSave = fileChooser.getSelectedFile();
             ImageIO.write(combinedImage, "png", fileToSave);
         }
+    }
+
+    /**
+     * Genera un vcard tomando como base la informacion proporcionada como parametro.
+     * @param dni
+     * @param nombre
+     * @param apellido
+     * @param legajo
+     * @param correo
+     * @param telefono
+     * @param equipo
+     * @param area
+     * @param gerencia
+     * @return un string que contiene la vcard.
+     */
+    public static String createVCard(String dni, String nombre, String apellido, String legajo, String correo, String telefono, String equipo, String area, String gerencia) {
+        return "BEGIN:VCARD\n" +
+                "VERSION:3.0\n" +
+                "FN:" + nombre + " " + apellido + "\n" +
+                "N:" + apellido + ";" + nombre + ";;;\n" +
+                "ORG:" + equipo + " - " + area + " - " + gerencia + "\n" +
+                "TEL;TYPE=CELL:" + telefono + "\n" +
+                "EMAIL:" + correo + "\n" +
+                "NOTE:DNI: " + dni + " - Legajo: " + legajo + "\n" +
+                "END:VCARD";
+    }
+
+    /**
+     * Genera el codigo QR con el icono embebido.
+     * @param qrImage
+     * @return
+     */
+    public static BufferedImage agregarIconoQRCode(BufferedImage qrImage,JFrame vista){
+        String iconPath = "src/Recursos/IconoCentral.png"; // Ruta del ícono
+
+        try {
+            BufferedImage iconImage = ImageIO.read(new File(iconPath));
+            return overlayIcon(qrImage, iconImage);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(vista, "Error al generar la imagen: " + ex.getMessage());
+        }
+        return qrImage;
+    }
+
+    /**
+     * superpone dos imagenes, el codigo QR y el icono.
+     * @param qrImage
+     * @param iconImage
+     * @return imagen superpuesta.
+     */
+    private static BufferedImage overlayIcon(BufferedImage qrImage, BufferedImage iconImage) {
+        int qrWidth = qrImage.getWidth();
+        int qrHeight = qrImage.getHeight();
+        int iconWidth = iconImage.getWidth();
+        int iconHeight = iconImage.getHeight();
+
+        // Calculate the position for the icon
+        int x = (qrWidth - iconWidth) / 2;
+        int y = (qrHeight - iconHeight) / 2;
+
+        // Combine the QR code and the icon
+        BufferedImage combined = new BufferedImage(qrWidth, qrHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = combined.createGraphics();
+        g.drawImage(qrImage, 0, 0, null);
+        g.drawImage(iconImage, x, y, null);
+        g.dispose();
+
+        return combined;
     }
 }

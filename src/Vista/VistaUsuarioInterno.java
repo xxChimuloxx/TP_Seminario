@@ -10,6 +10,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 
+/**
+ * Clase "VistaUsuarioInterno".
+ * Esta vista se utiliza para mostrar las operaciones y acciones de un usuario basico.
+ */
 public class VistaUsuarioInterno extends JFrame implements ActionListener {
     private JButton btnSalir;
     private JButton btnModificar;
@@ -32,16 +36,30 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
     private JFrame vistaPadre;
     private boolean closeOnExit = true;
 
+    /**
+     * Constructor basico, para pruebas de entorno.
+     * @deprecated
+     */
     public VistaUsuarioInterno() {
         initComponents();
         controlador = new ControladorUsuarioInterno(this);
     }
 
+    /**
+     * Constructor de acceso directo. Es el que se utiliza cuando accede un usuario basico.
+     * @param clave
+     */
     public VistaUsuarioInterno(int clave) {
         initComponents();
         controlador = new ControladorUsuarioInterno(this,clave);
     }
 
+    /**
+     * Constructor de acceso indirecto. Es el que se utiliza cuando lo invoco desde otra vista.
+     * Mantiene la referencia a vistaPadre para poder actualizarla si corresponde.
+     * @param vistaPadre
+     * @param clave
+     */
     public VistaUsuarioInterno(JFrame vistaPadre,int clave) {
         this.closeOnExit=false;
         initComponents();
@@ -49,6 +67,15 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
         this.vistaPadre = vistaPadre;
     }
 
+    /**
+     * Constructor de acceso indirecto. Es el que se utiliza cuando lo invoco desde otra vista.
+     * Mantiene la referencia a vistaPadre para poder actualizarla si corresponde.
+     * Incluye el modo de acceso, que determina particularidades en el comportamiento del elemento.
+     * @param vistaPadre
+     * @param clave
+     * @param modo puede ser ControladorUsuarioInterno.MODO_ADD o ControladorUsuarioInterno.MODO_EDICION
+     * @see ControladorUsuarioInterno
+     */
     public VistaUsuarioInterno(JFrame vistaPadre,int clave, int modo) {
         this.closeOnExit=false;
         initComponents();
@@ -56,9 +83,8 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
         this.vistaPadre = vistaPadre;
     }
 
-    /*
-    initComponents
-    Inicializa la vista
+    /**
+     * Inicializa los componentes de la vista.
      */
     private void initComponents() {
         //load del icono de la herramienta
@@ -107,6 +133,9 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * Permite bloquear la edicion de los campos de la vista.
+     */
     public void bloquearEdicion() {
         this.txtDNI.setEnabled(false);
         this.txtNombre.setEnabled(false);
@@ -140,6 +169,10 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
         btnCancelar.setVisible(false);
 
     }
+
+    /**
+     * Permite habilitar la edicion de los campos de la vista.
+     */
     public void habilitarEdicion() {
         //this.txtDNI.setEnabled(true);
         this.txtNombre.setEnabled(true);
@@ -166,6 +199,11 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * Implementa lo requerido por ActionPerformed.
+     * En este caso en funcion del evento E gestiona la accion del Boton.
+     * @param e the event to be processed
+     */
     public void actionPerformed(ActionEvent e) {
         if ("aBotonGuardar".equals(e.getActionCommand())) {
             if (formularioCompleto()) {
@@ -193,6 +231,10 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Valida que el formulario se encuentre completo y con la validacion de datos definida.
+     * @return
+     */
     private boolean formularioCompleto(){
         boolean retorno = true;
 
@@ -207,10 +249,7 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
         return retorno;
     }
 
-    /*
-    Set and Gets
-     */
-
+    //Sets and Gets
     public String getTxtDNI() {
         return txtDNI.getText();
     }
@@ -283,6 +322,11 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
         this.txtGerencia.setText(txtGerencia);
     }
 
+    /**
+     * Limpia los campos del formulario y los deja en blanco.
+     * Habilita la edicion del formulario.
+     * Deja el focus en el primer elemento del formulario.
+     */
     public void vaciarCampos(){
         txtDNI.setText("");
         txtNombre.setText("");

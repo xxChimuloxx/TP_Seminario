@@ -7,6 +7,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Clase que se utiliza para mostrar las acciones que realicen los usuarios administradores de personas.
+ */
 public class VistaUsuarioAdminP extends JFrame implements ActionListener {
     private JPanel panel;
     private JLabel lblImagen;
@@ -34,9 +37,8 @@ public class VistaUsuarioAdminP extends JFrame implements ActionListener {
 
     }
 
-    /*
-    initComponents
-    Inicializa la vista
+    /**
+     * Inicializa los componentes de la vista.
      */
     private void initComponents() {
         //load del icono de la herramienta
@@ -81,6 +83,11 @@ public class VistaUsuarioAdminP extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * Implementa lo requerido por ActionPerformed.
+     * En este caso en funcion del evento E gestiona la accion del Boton.
+     * @param e the event to be processed
+     */
     public void actionPerformed(ActionEvent e) {
         if ("aBotonSalir".equals(e.getActionCommand())) {
             controlador.accionBotonSalir();
@@ -99,6 +106,10 @@ public class VistaUsuarioAdminP extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Recupera el valor de la clave correspondiente al registro seleccionado en la tabla de datos.
+     * @return retorna el valor de la clave del registro seleccionado.
+     */
     private int evaluarSeleccion(){
         int retorno = -1;
         int selectedRow = tblDatos.getSelectedRow();
@@ -114,8 +125,11 @@ public class VistaUsuarioAdminP extends JFrame implements ActionListener {
         }
 
         return retorno;
-}
+    }
 
+    /**
+     * Permite refrescar la vista de la tabla de datos para reflejar actualizaciones.
+     */
     public void refrescarTabla() {
         controlador.cargarTabla(this.tblDatos);
     }

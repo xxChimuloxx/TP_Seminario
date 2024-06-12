@@ -7,6 +7,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Clase utilizada para mostrar el selector de paneles y vista de la aplicacion.
+ * Para pruebas y accesos directos.
+ */
 public class VistaSelector extends JFrame implements ActionListener {
     private JButton btnLogon;
     private JButton btnUsuarioInterno;
@@ -20,14 +24,16 @@ public class VistaSelector extends JFrame implements ActionListener {
 
     private ControladorSelector controlador;
 
+    /**
+     * Constructor de la clase
+     */
     public VistaSelector() {
         controlador = new ControladorSelector(this);
         initComponents();
     }
 
-    /*
-    initComponents
-    Inicializa la vista
+    /**
+     * Inicializa componentes de la vista.
      */
     private void initComponents() {
         //load del icono de la herramienta
@@ -70,6 +76,11 @@ public class VistaSelector extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * Implementa lo requerido por ActionPerformed.
+     * En este caso en funcion del evento E gestiona la accion del Boton.
+     * @param e the event to be processed
+     */
     public void actionPerformed(ActionEvent e) {
         if ("aBotonSalir".equals(e.getActionCommand())) {
             controlador.accionBotonSalir();

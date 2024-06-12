@@ -12,6 +12,10 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * Clase "ControladorUsuarioInterno".
+ * Esta vista se utiliza para controlar las operaciones y acciones de un usuario basico.
+ */
 public class ControladorUsuarioInterno {
     private VistaUsuarioInterno vista;
 
@@ -23,17 +27,36 @@ public class ControladorUsuarioInterno {
 
     private int modo = -1;
 
+    /**
+     * Constructor basico, para pruebas de entorno.
+     * Presenta por defecto la informacion del usuario: "12345678".
+     * @param vista
+     * @deprecated
+     */
     public ControladorUsuarioInterno(VistaUsuarioInterno vista) {
         this.vista = vista;
         this.persona = new Persona(userID);
         actualizarVistaDatosPersona();
     }
+
+    /**
+     * Constructor de acceso directo. Es el que se utiliza cuando accede un usuario basico.
+     * @param vista
+     * @param clave
+     */
     public ControladorUsuarioInterno(VistaUsuarioInterno vista,int clave) {
         this.vista = vista;
         this.userID = clave;
         this.persona = new Persona(userID);
         actualizarVistaDatosPersona();
     }
+
+    /**
+     * Constructor de acceso indirecto. Es el que se utiliza cuando se accede a este vista desde otra vista.
+     * @param vista
+     * @param clave
+     * @param modo
+     */
     public ControladorUsuarioInterno(VistaUsuarioInterno vista,int clave,int modo) {
         this.vista = vista;
         this.userID = clave;
@@ -51,6 +74,9 @@ public class ControladorUsuarioInterno {
         this.modo = modo;
     }
 
+    /**
+     * Permite actualizar la vista con los datos de la persona actual.
+     */
     private void actualizarVistaDatosPersona() {
         this.vista.setTxtDNI(String.valueOf(this.persona.getDni()));
         this.vista.setTxtNombre(this.persona.getNombre());
@@ -63,11 +89,16 @@ public class ControladorUsuarioInterno {
         this.vista.setTxtGerencia(this.persona.getGerencia());
     }
 
+    /**
+     * Para pruebas o ejecuciones directas.
+     * @param args
+     */
     public static void main(String[] args) {
         VistaUsuarioInterno v = new VistaUsuarioInterno();
     }
-    /*
-    accion Botones
+
+    /**
+     * Gestiona las acciones correspondientes al BotonSalir
      */
     public void accionBotonSalir(){
         if (vista.getDefaultCloseOperation()==JFrame.EXIT_ON_CLOSE) {
@@ -77,9 +108,17 @@ public class ControladorUsuarioInterno {
             vista.dispose();
         }
     }
+
+    /**
+     * Gestiona las acciones correspondientes al BotonModificar
+     */
     public void accionBotonModificar(){
         vista.habilitarEdicion();
     }
+
+    /**
+     * Gestiona las acciones correspondientes al BotonCancelar
+     */
     public void accionBotonCancelar(){
         vista.bloquearEdicion();
         actualizarVistaDatosPersona();
@@ -87,6 +126,10 @@ public class ControladorUsuarioInterno {
             vista.dispose();
         }
     }
+
+    /**
+     * Gestiona las acciones correspondientes al BotonGuardar
+     */
     public void accionBotonGuardar(){
         if (Dialogos.confirmacionAccion()){
             vista.bloquearEdicion();
@@ -127,6 +170,9 @@ public class ControladorUsuarioInterno {
         }
     }
 
+    /**
+     * Gestiona las acciones correspondientes al BotonGenerarBanner
+     */
     public void accionGenerarBanner() {
 
         String[] options = {"Generar Banner", "Generar Codigo QR"};
@@ -147,12 +193,18 @@ public class ControladorUsuarioInterno {
         CodigoQR.registrarQR(this.persona.getDni(),CodigoQR.CONSTANTE_TIPO_PERSONA);
     }
 
+    /**
+     * Gestiona las acciones correspondientes al BotonGenerarBanner. Seleccion 1
+     */
     private void option1Selected() {
         //System.out.println("Opción 2 seleccionada.");
         // Llama a la función correspondiente para la opción 2
         accionGenerarBannerCB();
     }
 
+    /**
+     * Gestiona las acciones correspondientes al BotonGenerarBanner. Seleccion 1
+     */
     private void option2Selected() {
         //System.out.println("Opción 1 seleccionada.");
         // Llama a la función correspondiente para la opción 1
@@ -160,9 +212,10 @@ public class ControladorUsuarioInterno {
     }
 
     /**
-     * muestra QR
+     * Genera un codigoQR con los datos de la persona actual, y lo muestra en pantalla.
      */
     public void accionGenerarBannerQR() {
+        /*
         String text = "DNI: " + persona.getDni() + "\n" +
                 "Nombre: " + persona.getNombre() + "\n" +
                 "Apellido: " + persona.getApellido() + "\n" +
@@ -172,30 +225,47 @@ public class ControladorUsuarioInterno {
                 "Equipo de Trabajo: " + persona.getEquipo() + "\n" +
                 "Área: " + persona.getArea() + "\n" +
                 "Gerencia: " + persona.getGerencia();
+        */
+        String dni = String.valueOf(persona.getDni());
+        String nombre = persona.getNombre();
+        String apellido = persona.getApellido();
+        String legajo = String.valueOf(persona.getLegajo());
+        String correo = persona.getCorreo();
+        String telefono = persona.getTelefono();
+        String equipo = persona.getEquipo();
+        String area = persona.getArea();
+        String gerencia = persona.getGerencia();
+
+        String vCard = CodigoQR.createVCard(dni, nombre, apellido, legajo, correo, telefono, equipo, area, gerencia);
+
         try {
-            BufferedImage qrImage = CodigoQR.generarCodeImage(text, 350, 350);
-            CodigoQR.mostrarQRCodePopup(qrImage);
+            BufferedImage qrImage = CodigoQR.generarQRCodeImage(vCard, 350, 350);
+            BufferedImage qrImageIcon = CodigoQR.agregarIconoQRCode(qrImage,vista);
+            CodigoQR.mostrarQRCodePopup(qrImageIcon);
         } catch (WriterException | IOException ex) {
             JOptionPane.showMessageDialog(vista, "Error al generar el código QR: " + ex.getMessage());
         }
     }
 
     /**
-     * muestra banner con datos, logo y qr
+     * Genera un banner con los datos de la persona actual, y lo muestra en pantalla.
+     * El banner contiene una firma pre-definida, un codigo QR y el logo de la compañia.
      */
     public void accionGenerarBannerCB() {
-        //String text = "Hola Mundo";
-        String qrContent = "DNI: " + persona.getDni() + "\n" +
-                "Nombre: " + persona.getNombre() + "\n" +
-                "Apellido: " + persona.getApellido() + "\n" +
-                "Legajo: " + persona.getLegajo() + "\n" +
-                "Correo Electrónico: " + persona.getCorreo() + "\n" +
-                "Teléfono: " + persona.getTelefono() + "\n" +
-                "Equipo de Trabajo: " + persona.getEquipo() + "\n" +
-                "Área: " + persona.getArea() + "\n" +
-                "Gerencia: " + persona.getGerencia();
+        String dni = String.valueOf(persona.getDni());
+        String nombre = persona.getNombre();
+        String apellido = persona.getApellido();
+        String legajo = String.valueOf(persona.getLegajo());
+        String correo = persona.getCorreo();
+        String telefono = persona.getTelefono();
+        String equipo = persona.getEquipo();
+        String area = persona.getArea();
+        String gerencia = persona.getGerencia();
+
+        String vCard = CodigoQR.createVCard(dni, nombre, apellido, legajo, correo, telefono, equipo, area, gerencia);
+
         try {
-            BufferedImage qrImage = CodigoQR.generarCodeImage(qrContent, 350, 150);
+            BufferedImage qrImage = CodigoQR.generarQRCodeImage(vCard, 350, 150);
             BufferedImage combinedImage = CodigoQR.combineImages(CodigoQR.crearTablaDatos(String.valueOf(persona.getDni()), persona.getNombre(), persona.getApellido(), String.valueOf(persona.getLegajo()), persona.getCorreo(), persona.getTelefono(), persona.getEquipo(), persona.getArea(), persona.getGerencia()), qrImage);
             CodigoQR.mostrarQRCodePopup(combinedImage);
         } catch (WriterException | IOException ex) {

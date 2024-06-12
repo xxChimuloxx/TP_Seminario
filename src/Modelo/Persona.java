@@ -7,6 +7,10 @@ import java.sql.Statement;
 
 import java.sql.ResultSet;
 
+/**
+ * Clase persona.
+ * Representa a una persona fisica de la compañia segun el enfoque necesario por el area de personal
+ */
 public class Persona {
 
     private int dni;
@@ -56,6 +60,11 @@ public class Persona {
         }
     }
 
+    /**
+     * Verifica que persona que se pasa como parametro exista en la base de datos.
+     * @param dni
+     * @return
+     */
     public boolean existePersona(int dni){
         boolean retorno = false;
         String consulta="SELECT * FROM mydb.personas WHERE DNI="+dni;
@@ -75,9 +84,7 @@ public class Persona {
         return retorno;
     }
 
-    /*
-    Set and Gets
-     */
+    //Gets and Sets
     public String getGerencia() {
         return gerencia;
     }
@@ -151,7 +158,7 @@ public class Persona {
     }
 
     /**
-     * Registra la persona en la base de datos con los registros de la clase.
+     * Elminina la persona en la base de datos con los registros de la clase.
      */
     public void eliminar() {
         String consulta="DELETE FROM `mydb`.`Personas` WHERE `DNI` = " + this.dni + ";";

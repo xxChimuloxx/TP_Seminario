@@ -7,6 +7,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
 
+/**
+ * Clase que se usa para representar un usuario segun el enfoque del area de seguridad.
+ * Un usuario registrado, debe tambien existir en la tabla de personas.
+ */
 public class Usuario {
 
     private String userID;
@@ -16,9 +20,14 @@ public class Usuario {
     private Integer intentos;
     private Integer estado;
 
-    /****************************************************************
-     Constructores
-     ****************************************************************/
+
+    /**
+     * Constructor general de la clase.
+     * @param userID
+     * @param password
+     * @param descripcion
+     * @param tipo
+     */
     public Usuario(String userID, String password, String descripcion, Integer tipo){
         this.userID = userID;
         this.password = password;
@@ -28,6 +37,10 @@ public class Usuario {
         this.estado = 1;
     }
 
+    /**
+     * Constructor simplificado de la clase, recupera la informacion desde la base de datos.
+     * @param userID
+     */
     public Usuario(String userID){
         this.userID = userID;
         String consulta="SELECT * FROM mydb.usuarios WHERE UserID="+userID;
@@ -165,9 +178,13 @@ public class Usuario {
         }
         return retorno;
     }
-    /****************************************************************
-    valida que el usuario y la contraseña seean correctas.
-     ****************************************************************/
+
+    /**
+     * Valida que el usuario y la contraseña sean correctas.
+     * @param userID
+     * @param password
+     * @return
+     */
     public static Boolean probarIngreso(String userID, String password){
         Boolean retorno = false;
         String consulta="SELECT * FROM mydb.usuarios WHERE UserID="+userID;
@@ -183,10 +200,9 @@ public class Usuario {
                 String rPassword = resultado.getString (2);
                 int rEstado = resultado.getInt (6);
 
-                System.out.println(password);
-                System.out.println(rPassword);
                 //valido contraseña
                 if (Objects.equals(password, rPassword)){
+                    //valido estado
                     if (rEstado == 1) {
                         retorno = true;
                     }
@@ -197,13 +213,14 @@ public class Usuario {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        System.out.println(retorno);
-        System.out.println("-------------");
         return retorno;
     }
-    /*****************************************************************
-    penaliza los accesos incorrectos. intentos.-
-     *****************************************************************/
+
+    /**
+     * Penaliza los accesos incorrectos. 3 intentos.
+     * @param userID
+     * @return
+     */
     public static int penalizar(String userID) {
         int rIntentos = -1;
         String consulta="SELECT * FROM mydb.Usuarios WHERE UserID="+userID;
@@ -227,8 +244,10 @@ public class Usuario {
         }
         return rIntentos;
     }
-    /*
-    Bloqueo y desbloqueo de usuario
+
+    /**
+     * Bloquea el usuario en la base de datos. No sera posible utilizarlo en el sistema.
+     * @param userID
      */
     public static void bloquear(String userID){
         String consulta="UPDATE mydb.Usuarios\n" +
@@ -242,6 +261,11 @@ public class Usuario {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Desbloquea el usuario en la base de datos. Sera posible utilizarlo en el sistema.
+     * @param userID
+     */
     public static void desbloquear(String userID){
         String consulta="UPDATE mydb.Usuarios\n" +
                 "SET `Estado` = 1,\n" +
@@ -255,9 +279,9 @@ public class Usuario {
             e.printStackTrace();
         }
     }
-    /****************************************************************
-        Metodos de consulta
-         ****************************************************************/
+
+
+    //Gets and Sets
     public Integer getTipo() {
         return tipo;
     }

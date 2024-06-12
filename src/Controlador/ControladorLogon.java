@@ -6,6 +6,9 @@ import Vista.VistaSeguridad;
 import Vista.VistaUsuarioAdminP;
 import Vista.VistaUsuarioInterno;
 
+/**
+ * Clase utilizada para controlar las operaciones y acciones del proceso de logon al aplicativo.
+ */
 public class ControladorLogon {
 
     private VistaLogon vista;
@@ -16,16 +19,26 @@ public class ControladorLogon {
     public static int USUARIO_ADMIN_CAMPANIA = 4;
     public static int USUARIO_ADMIN_SEGURIDAD = 5;
 
+    /**
+     * Constructor de la clase
+     * @param vista
+     */
     public ControladorLogon(VistaLogon vista) {
         this.vista = vista;
     }
 
+    /**
+     * Para ejecuciones de prueba
+     * @param args
+     */
     public static void main(String[] args) {
         VistaLogon v = new VistaLogon();
     }
 
-    /*
-    accion BotonIngresar
+    /**
+     * Gestiona las acciones correspondientes al BotonIngresar
+     * @param usuario
+     * @param clave
      */
     public void accionBotonIngresar(String usuario, String clave){
         if (!validarAcceso(usuario,clave)){
@@ -48,13 +61,22 @@ public class ControladorLogon {
 
         }
     }
-    /*
-    validarAcceso
-    verifica que las credenciales ingresadas en la vista sean correctas.
+
+    /**
+     * Verifica que las credenciales ingresadas en la vista sean correctas.
+     * @param usuario
+     * @param clave
+     * @return
      */
     private boolean validarAcceso(String usuario,String clave){
         return Usuario.probarIngreso(usuario,clave);
     }
+
+    /**
+     * Penaliza el acceso para el usuario que se recibe como parametro.
+     * Fallas maximas toleradas 3.
+     * @param usuario
+     */
     private void penalizarAcceso(String usuario){
         if (Usuario.penalizar(usuario)>=3){
             Usuario.bloquear(usuario);

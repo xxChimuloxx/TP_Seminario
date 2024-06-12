@@ -11,6 +11,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 
+/**
+ * Clase que permite mostrar las acciones y operaciones de los usuarios basicos.
+ */
 public class VistaUsuarios extends JFrame implements ActionListener {
     private JPanel panel1;
     private JLabel lblImagen;
@@ -34,18 +37,34 @@ public class VistaUsuarios extends JFrame implements ActionListener {
     private ControladorUsuarios controlador;
     private JFrame vistaPadre;
 
+    /**
+     * Constructor de la clase. Para acceso indirecto desde otra vista.     *
+     * @param vistaPadre
+     * @param clave
+     */
     public VistaUsuarios(JFrame vistaPadre,int clave) {
         initComponents();
         controlador = new ControladorUsuarios(this,clave);
         this.vistaPadre = vistaPadre;
     }
 
+    /**
+     * Constructor de la clase. Para acceso indirecto desde otra vista.     *
+     * modo permite determinar y habilitar solo ciertas funcionalidades de la vista.
+     * @param vistaPadre
+     * @param clave
+     * @param modo ControladorUsuarios.MODO_EDICION o ControladorUsuarios.MODO_ADD
+     * @see ControladorUsuarios
+     */
     public VistaUsuarios(JFrame vistaPadre,int clave, int modo) {
         initComponents();
         controlador = new ControladorUsuarios(this,clave,modo);
         this.vistaPadre = vistaPadre;
     }
 
+    /**
+     * Inicializa los componentes de la vista.
+     */
     private void initComponents() {
         //load del icono de la herramienta
         Image image = Toolkit.getDefaultToolkit().getImage("src/Recursos/IconoS21.png");
@@ -87,6 +106,9 @@ public class VistaUsuarios extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * Permite inhabilitar la edicion de los componentes de la vista.
+     */
     public void inhabilitarEdicion(){
         this.txtUserID.setDisabledTextColor(new Color(45, 131, 82));
         this.txtPassword.setDisabledTextColor(new Color(45, 131, 82));
@@ -107,6 +129,9 @@ public class VistaUsuarios extends JFrame implements ActionListener {
         btnModificar.setVisible(true);
     }
 
+    /**
+     * Permite habilitar la edicion de los componentes de la vista.
+     */
     public void habilitarEdicion(){
         this.txtUserID.setDisabledTextColor(new Color(136, 24, 54));
         this.txtPassword.setDisabledTextColor(new Color(136, 24, 54));
@@ -129,6 +154,11 @@ public class VistaUsuarios extends JFrame implements ActionListener {
         txtPassword.requestFocus();
     }
 
+    /**
+     * Implementa lo requerido por ActionPerformed.
+     * En este caso en funcion del evento E gestiona la accion del Boton.
+     * @param e the event to be processed
+     */
     public void actionPerformed(ActionEvent e) {
         if ("aBotonSalir".equals(e.getActionCommand())) {
             controlador.accionBotonSalir();
@@ -150,6 +180,10 @@ public class VistaUsuarios extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Controla que el formulario este completo, y que se hayan cargado los datos conforme las validaciones definidas.
+     * @return
+     */
     private boolean formularioCompleto(){
         boolean retorno = true;
 
@@ -177,6 +211,7 @@ public class VistaUsuarios extends JFrame implements ActionListener {
         return retorno;
     }
 
+    //Get and Sets
     public String getTxtUserID() {
         return txtUserID.getText();
     }
@@ -225,6 +260,11 @@ public class VistaUsuarios extends JFrame implements ActionListener {
         this.txtTipo.setText(txtTipo);
     }
 
+    /**
+     * Limpia los campos del formulario y los deja en blanco.
+     * Habilita el modo edicion.
+     * Hace focus en el primer campo del formualario.
+     */
     public void vaciarCampos(){
         this.txtUserID.setText("");
         this.txtPassword.setText("");

@@ -4,6 +4,9 @@ import Modelo.Persona;
 import Modelo.Usuario;
 import Vista.*;
 
+/**
+ * Clase que permite gestionar las acciones y operaciones de los usuarios basicos.
+ */
 public class ControladorUsuarios {
 
     private VistaUsuarios vista;
@@ -20,6 +23,11 @@ public class ControladorUsuarios {
 
     private int modo = -1;
 
+    /**
+     * Constructor de la clase. Acceso indirecto a traves de otra vista.
+     * @param vista
+     * @param clave
+     */
     public ControladorUsuarios(VistaUsuarios vista,int clave) {
         this.vista = vista;
 
@@ -27,6 +35,13 @@ public class ControladorUsuarios {
         actualizarVistaDatosUsuario();
     }
 
+    /**
+     * Constructor de la clase. Acceso indirecto a traves de otra vista.
+     * Modo determina funciones acotadas al funcionamiento normal.
+     * @param vista
+     * @param clave
+     * @param modo ControladorUsuarios.MODO_EDICION o ControladorUsuarios.MODO_ADD
+     */
     public ControladorUsuarios(VistaUsuarios vista,int clave,int modo) {
         this.vista = vista;
         this.usuario = new Usuario(String.valueOf(clave));
@@ -43,13 +58,24 @@ public class ControladorUsuarios {
         this.modo = modo;
     }
 
+    /**
+     * Para ejecuciones y pruebas de funcionamiento.
+     * @param args
+     */
     public static void main(String[] args) {
         //VistaUsuarios v = new VistaUsuarios(12345003);
     }
 
+    /**
+     * Gestiona las acciones correspondientes al BotonSalir
+     */
     public void accionBotonSalir(){
         this.vista.dispose();
     }
+
+    /**
+     * Gestiona las acciones correspondientes al BotonGuardar
+     */
     public void accionBotonGuardar(){
         if (Dialogos.confirmacionAccion()){
             this.vista.inhabilitarEdicion();
@@ -86,13 +112,24 @@ public class ControladorUsuarios {
             actualizarVistaDatosUsuario();
         }
     }
+
+    /**
+     * Gestiona las acciones correspondientes al BotonModificar
+     */
     public void accionBotonModificar(){
         this.vista.habilitarEdicion();
     }
+
+    /**
+     * Gestiona las acciones correspondientes al BotonCancelar
+     */
     public void accionBotonCancelar(){
         this.vista.dispose();
     }
 
+    /**
+     * Fuerza la actualizacion de los datos de la vista, con los datos actuales del usuario.
+     */
     private void actualizarVistaDatosUsuario() {
         this.vista.setTxtUserID(this.usuario.getUserID());
         this.vista.setTxtPassword(this.usuario.getPassword());

@@ -7,6 +7,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Clase utilizada para mostrar las operaciones y acciones del proceso de logon al aplicativo.
+ */
 public class VistaLogon extends JFrame implements ActionListener{
     private JPanel panel1;
     private JButton btnIngresar;
@@ -16,14 +19,16 @@ public class VistaLogon extends JFrame implements ActionListener{
 
     private ControladorLogon controlador;
 
+    /**
+     * Constructor de la vista
+     */
     public VistaLogon() {
         controlador = new ControladorLogon(this);
         initComponents();
     }
 
-    /*
-    initComponents
-    Inicializa la vista
+    /**
+     * Inicializa los componentes de la vista.
      */
     private void initComponents() {
         //load del icono de la herramienta
@@ -59,8 +64,10 @@ public class VistaLogon extends JFrame implements ActionListener{
 
     }
 
-    /*
-    Implementa lo requerido por ActionPerformed
+    /**
+     * Implementa lo requerido por ActionPerformed.
+     * En este caso en funcion del evento E gestiona la accion del Boton.
+     * @param e the event to be processed
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -68,8 +75,9 @@ public class VistaLogon extends JFrame implements ActionListener{
             controlador.accionBotonIngresar(this.txtUsuario.getText(), this.txtClave.getText());
         }
     }
-    /*
-    rutinas para set de acceso correcto o incorreto
+
+    /**
+     * Rutinas para mostrar el acceso como Incorrecto y actualizar la vista en consecuencia.
      */
     public void accesoIncorrecto(){
         this.lblError.setText("Acceso Incorrecto.");
@@ -77,14 +85,21 @@ public class VistaLogon extends JFrame implements ActionListener{
         this.txtUsuario.setText("");
         this.txtUsuario.requestFocus();
     }
+
+    /**
+     * Rutina para mostrar el acceso como Correcto y actualizar la vista en consecuencia.
+     */
     public void accesoCorrecto(){
         lblError.setForeground(new Color(0,0,200));
         lblError.setText("Accediendo...");
     }
+
+    /**
+     * Rutina para mostrar el acceso Incorrecto y bloquear el usuario.
+     */
     public void bloqueoUsuario(){
         lblError.setForeground(new Color(200,0,0));
         lblError.setText("Usuario Bloqueado");
     }
-
 
 }

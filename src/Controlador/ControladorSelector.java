@@ -2,20 +2,30 @@ package Controlador;
 
 import Vista.*;
 
+/**
+ * Clase de prueba para concentrar los accesos a las distintas vistas/controladores de la aplicacion.
+ */
 public class ControladorSelector {
 
     private VistaSelector vista;
 
+    /**
+     * Constructo de la clase
+     * @param vista
+     */
     public ControladorSelector(VistaSelector vista) {
         this.vista = vista;
     }
 
+    /**
+     * Para ejecuciones de prueba
+     * @param args
+     */
     public static void main(String[] args) {
         VistaSelector v = new VistaSelector();
     }
-    /*
-    accion Botones
-     */
+
+    //Controlador de acciones de los botones
     public void accionBotonSalir(){
         System.exit(0);
     }

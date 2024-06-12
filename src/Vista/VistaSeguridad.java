@@ -7,6 +7,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Clase que se utiliza para mostrar las acciones y operaciones que realiza un usuario administrador de la seguridad del sistema.
+ */
 public class VistaSeguridad extends JFrame implements ActionListener {
     private JPanel panel;
     private JPanel panel0;
@@ -24,6 +27,9 @@ public class VistaSeguridad extends JFrame implements ActionListener {
     private JButton btnBloquear;
     private ControladorSeguridad controlador;
 
+    /**
+     * Constructor de la clase
+     */
     public VistaSeguridad() {
         controlador = new ControladorSeguridad(this);
         initComponents();
@@ -33,9 +39,8 @@ public class VistaSeguridad extends JFrame implements ActionListener {
         tblDatos.setAutoCreateRowSorter(true);
     }
 
-    /*
-    initComponents
-    Inicializa la vista
+    /**
+     * Inicializa los componentes de la vista.
      */
     private void initComponents() {
         //load del icono de la herramienta
@@ -84,6 +89,11 @@ public class VistaSeguridad extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * Implementa lo requerido por ActionPerformed.
+     * En este caso en funcion del evento E gestiona la accion del Boton.
+     * @param e the event to be processed
+     */
     public void actionPerformed(ActionEvent e) {
         if ("aBotonSalir".equals(e.getActionCommand())) {
             controlador.accionBotonSalir();
@@ -108,6 +118,10 @@ public class VistaSeguridad extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Se obtiene el registro seleccionado de la tabla de datos de la vista.
+     * @return se retorna la clave del objeto seleccionado.
+     */
     private int evaluarSeleccion(){
         int retorno = -1;
         int selectedRow = tblDatos.getSelectedRow();
@@ -125,6 +139,9 @@ public class VistaSeguridad extends JFrame implements ActionListener {
         return retorno;
     }
 
+    /**
+     * Vuelva a cargar la informacion de la tabla de datos para refrescar su contenido.
+     */
     public void refrescarTabla() {
         controlador.cargarTabla(this.tblDatos);
     }
