@@ -2,6 +2,7 @@ package Modelo;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -57,8 +58,9 @@ public class Usuario {
                 this.intentos = resultado.getInt (5);
                 this.estado = resultado.getInt (6);
             }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
         }
     }
 
@@ -79,8 +81,9 @@ public class Usuario {
         try {
             Statement sentencia= CConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al actualizar informacion en la base de datos: " + e.getMessage());
         }
     }
 
@@ -122,8 +125,9 @@ public class Usuario {
                     modelo.addRow(nuevaLinea);
                 }
                 //CConexionMySQL.cerrar();
-            } catch (SQLException | ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (SQLException | ClassNotFoundException | IOException e) {
+                //e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error al listar elementos de la base de datos: " + e.getMessage());
             }
 
     }
@@ -136,8 +140,9 @@ public class Usuario {
         try {
             Statement sentencia= CConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al eliminar elemento de la base de datos: " + e.getMessage());
         }
     }
 
@@ -151,8 +156,9 @@ public class Usuario {
         try {
             Statement sentencia= CConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al insertar elemento en la base de datos: " + e.getMessage());
         }
     }
 
@@ -173,8 +179,9 @@ public class Usuario {
                 this.userID = resultado.getString (1);
                 retorno = true;
             }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar elemento de la base de datos: " + e.getMessage());
         }
         return retorno;
     }
@@ -210,8 +217,9 @@ public class Usuario {
             }
             //CConexionMySQL.cerrar();
 
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
         }
         return retorno;
     }
@@ -239,8 +247,9 @@ public class Usuario {
                     sentencia.executeUpdate(consulta);
                 }
             }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar elemento de la base de datos: " + e.getMessage());
         }
         return rIntentos;
     }
@@ -257,8 +266,9 @@ public class Usuario {
         try {
             Statement sentencia= CConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al actualizar elemento de la base de datos: " + e.getMessage());
         }
     }
 
@@ -275,8 +285,9 @@ public class Usuario {
         try {
             Statement sentencia= CConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al actualizar elemento de la base de datos: " + e.getMessage());
         }
     }
 

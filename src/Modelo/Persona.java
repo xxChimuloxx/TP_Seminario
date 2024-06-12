@@ -1,7 +1,10 @@
 package Modelo;
 
+import Vista.Dialogos;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -35,6 +38,11 @@ public class Persona {
     public Persona(int dni) {
         cargoPersona(dni);
     }
+
+    /**
+     * Actualiza los datos del objeto con la informacion recuperada de la base de datos.
+     * @param dni
+     */
     public void cargoPersona(int dni){
         String consulta="SELECT * FROM mydb.personas WHERE DNI="+dni;
 
@@ -55,8 +63,9 @@ public class Persona {
                 this.gerencia = resultado.getString(10);
             }
             //CConexionMySQL.cerrar();
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar los datos de la Persona: " + e.getMessage());
         }
     }
 
@@ -78,8 +87,9 @@ public class Persona {
                 retorno = true;
             }
             //CConexionMySQL.cerrar();
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al validar la existencia de la Persona: " + e.getMessage());
         }
         return retorno;
     }
@@ -165,8 +175,9 @@ public class Persona {
         try {
             Statement sentencia= CConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al eliminar los datos de la Persona: " + e.getMessage());
         }
     }
 
@@ -180,8 +191,9 @@ public class Persona {
         try {
             Statement sentencia= CConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al insertar los datos de la Persona: " + e.getMessage());
         }
     }
 
@@ -212,8 +224,9 @@ public class Persona {
         try {
             Statement sentencia= CConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al actualizar los datos de la Persona: " + e.getMessage());
         }
     }
 
@@ -264,8 +277,9 @@ public class Persona {
                 modelo.addRow(nuevaLinea);
             }
             //CConexionMySQL.cerrar();
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al listar las personas de la base de datos: " + e.getMessage());
         }
     }
 }

@@ -51,8 +51,9 @@ public class CodigoQR {
                     sentencia.executeUpdate(consulta);
             }
             //CConexionMySQL.cerrar();
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al registrar el código QR: " + e.getMessage());
         }
 
     }

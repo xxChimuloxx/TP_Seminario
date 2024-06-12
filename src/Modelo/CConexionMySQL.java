@@ -22,13 +22,14 @@ public class CConexionMySQL {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public static Connection obtener() throws SQLException, ClassNotFoundException {
+    public static Connection obtener() throws SQLException, ClassNotFoundException, IOException {
         if (cnx == null) {
             Properties properties = new Properties();
             try (InputStream input = new FileInputStream("src/config.properties")) {
                 properties.load(input);
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                throw new IOException(e);
             }
 
             String jdbcUrl = properties.getProperty("db.url");
