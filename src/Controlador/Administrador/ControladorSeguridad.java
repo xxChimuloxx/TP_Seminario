@@ -1,5 +1,6 @@
-package Controlador;
+package Controlador.Administrador;
 
+import Controlador.Raices.ControladorUsuarios;
 import Modelo.Persona;
 import Modelo.Usuario;
 import Vista.*;
@@ -9,15 +10,19 @@ import javax.swing.*;
 /**
  * Clase que se utiliza para gestionar las acciones y operaciones que realiza un administrador de la seguridad de la aplicacion.
  */
-public class ControladorSeguridad {
-    private VistaSeguridad vista;
+public class ControladorSeguridad implements ControladorInterfaz {
+    private VistaAdministrador vista;
+    private int CLAVE_POS = 0;
 
     /**
      * Constructor de la clase
      * @param vista
      */
-    public ControladorSeguridad(VistaSeguridad vista) {
+    public ControladorSeguridad(VistaAdministrador vista) {
         this.vista = vista;
+
+        this.setBotonEspecial1("Bloquear Usuario");
+        this.setBotonEspecial2("Desbloquear Usuario");
     }
 
     /**
@@ -25,7 +30,7 @@ public class ControladorSeguridad {
      * @param args
      */
     public static void main(String[] args) {
-        VistaSeguridad v = new VistaSeguridad();
+        VistaAdministrador v = new VistaAdministrador(VistaAdministrador.VISTA_SEGURIDAD,true);
     }
 
     /**
@@ -54,7 +59,8 @@ public class ControladorSeguridad {
      */
     public void accionBotonModificar(int clave){
         if(clave!=-1) {
-            VistaUsuarios v = new VistaUsuarios(vista,clave, ControladorUsuarios.MODO_EDICION);
+            int value = Integer.parseInt(this.vista.getTableModel().getValueAt(clave,this.CLAVE_POS).toString());
+            VistaUsuarios v = new VistaUsuarios(vista,value, ControladorUsuarios.MODO_EDICION);
         }
     }
 
@@ -64,7 +70,8 @@ public class ControladorSeguridad {
      */
     public void accionBotonConsultar(int clave){
         if(clave!=-1) {
-            VistaUsuarios v = new VistaUsuarios(vista, clave);
+            int value = Integer.parseInt(this.vista.getTableModel().getValueAt(clave,this.CLAVE_POS).toString());
+            VistaUsuarios v = new VistaUsuarios(vista, value);
         }
     }
 
@@ -72,10 +79,11 @@ public class ControladorSeguridad {
      * Gestiona las acciones correspondientes al BotonDesbloquear
      * @param clave
      */
-    public void accionBotonDesbloquear(int clave){
+    public void accionBotonEspecial2(int clave){
         if(clave!=-1) {
             if(Dialogos.confirmacionAccion()) {
-                Usuario.desbloquear(String.valueOf(clave));
+                int value = Integer.parseInt(this.vista.getTableModel().getValueAt(clave,this.CLAVE_POS).toString());
+                Usuario.desbloquear(String.valueOf(value));
                 vista.refrescarTabla();
             }
         }
@@ -85,10 +93,11 @@ public class ControladorSeguridad {
      * Gestiona las acciones correspondientes al BotonBloquear
      * @param clave
      */
-    public void accionBotonBloquear(int clave){
+    public void accionBotonEspecial1(int clave){
         if(clave!=-1) {
             if(Dialogos.confirmacionAccion()) {
-                Usuario.bloquear(String.valueOf(clave));
+                int value = Integer.valueOf((String) this.vista.getTableModel().getValueAt(clave,this.CLAVE_POS));
+                Usuario.bloquear(String.valueOf(value));
                 vista.refrescarTabla();
             }
         }
@@ -101,10 +110,11 @@ public class ControladorSeguridad {
     public void accionBotonBorrar(int clave){
         if(clave!=-1) {
             if(Dialogos.confirmacionAccion()) {
-                Persona persona = new Persona(clave);
+                int value = Integer.valueOf((String) this.vista.getTableModel().getValueAt(clave,this.CLAVE_POS));
+                Persona persona = new Persona(value);
                 persona.eliminar();
 
-                Usuario usuario = new Usuario(String.valueOf(clave));
+                Usuario usuario = new Usuario(String.valueOf(value));
                 usuario.eliminar();
 
                 vista.refrescarTabla();
@@ -120,4 +130,18 @@ public class ControladorSeguridad {
         Usuario.listarPersonas(tblDatos);
 
     }
+
+    /**
+     * Determina si sera necesario utilizar el boton especial #1
+     * @param texto
+     */
+    public void setBotonEspecial1(String texto){
+        vista.setBotonEspecial1(texto);
+    }
+
+    /**
+     * Determina si sera necesario utilizar el boton especial #2
+     * @param texto
+     */
+    public void setBotonEspecial2(String texto){ vista.setBotonEspecial2(texto);}
 }

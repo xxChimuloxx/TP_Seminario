@@ -1,10 +1,9 @@
 package Controlador;
 
 import Modelo.Usuario;
-import Vista.VistaLogon;
-import Vista.VistaSeguridad;
-import Vista.VistaUsuarioAdminP;
-import Vista.VistaUsuarioInterno;
+import Vista.*;
+
+import java.nio.channels.Selector;
 
 /**
  * Clase utilizada para controlar las operaciones y acciones del proceso de logon al aplicativo.
@@ -49,16 +48,23 @@ public class ControladorLogon {
             vista.accesoCorrecto();
             //VALIDAR ACCESO
             Usuario lusuario = new Usuario(clave);
-            if(lusuario.getTipo()==ControladorLogon.USUARIO_BASICO){
-                VistaUsuarioInterno v = new VistaUsuarioInterno(Integer.parseInt(clave));
-            }
-            if(lusuario.getTipo()==ControladorLogon.USUARIO_ADMIN_PERSONAS){
-                VistaUsuarioAdminP v = new VistaUsuarioAdminP();
-            }
-            if(lusuario.getTipo()==ControladorLogon.USUARIO_ADMIN_SEGURIDAD){
-                VistaSeguridad v = new VistaSeguridad();
-            }
 
+            int tipo = lusuario.getTipo();
+            int user = Integer.parseInt(lusuario.getUserID());
+            String descripcion = lusuario.getDescripcion();
+
+            String numeroComoCadena = String.valueOf(tipo);
+
+            // Asegurarse de que el número tiene exactamente 5 dígitos
+            int num1 = Character.getNumericValue(numeroComoCadena.charAt(0));
+            int num2 = Character.getNumericValue(numeroComoCadena.charAt(1));
+            int num3 = Character.getNumericValue(numeroComoCadena.charAt(2));
+            int num4 = Character.getNumericValue(numeroComoCadena.charAt(3));
+            int num5 = Character.getNumericValue(numeroComoCadena.charAt(4));
+
+            String nombre = lusuario.getDescripcion();
+            this.vista.setVisible(false);
+            VistaSelector v = new VistaSelector(num1,num2,num3,num4,num5,descripcion,user);
         }
     }
 

@@ -47,7 +47,7 @@ public class Usuario {
         String consulta="SELECT * FROM mydb.usuarios WHERE UserID="+userID;
 
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             ResultSet resultado=sentencia.executeQuery(consulta);
 
             if (resultado.next()){
@@ -79,7 +79,7 @@ public class Usuario {
         System.out.println(consulta);
 
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
@@ -112,7 +112,7 @@ public class Usuario {
             String consulta="SELECT * FROM mydb.Usuarios;";
 
             try {
-                Statement sentencia= CConexionMySQL.obtener().createStatement();
+                Statement sentencia= ConexionMySQL.obtener().createStatement();
                 ResultSet resultado=sentencia.executeQuery(consulta);
 
                 while (resultado.next()){
@@ -124,7 +124,7 @@ public class Usuario {
                             resultado.getInt(6)};
                     modelo.addRow(nuevaLinea);
                 }
-                //CConexionMySQL.cerrar();
+                //ConexionMySQL.cerrar();
             } catch (SQLException | ClassNotFoundException | IOException e) {
                 //e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Error al listar elementos de la base de datos: " + e.getMessage());
@@ -138,7 +138,7 @@ public class Usuario {
     public void eliminar() {
         String consulta="DELETE FROM `mydb`.`Usuarios` WHERE `UserID` = " + this.userID + ";";
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
@@ -154,7 +154,7 @@ public class Usuario {
                 "VALUES ("+this.userID+",'"+this.password+"','"+this.descripcion+"',"+this.tipo+","+this.intentos+","+this.estado+"\n);";
         //System.out.println(consulta);
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
@@ -172,7 +172,7 @@ public class Usuario {
         String consulta="SELECT * FROM mydb.usuarios WHERE UserID="+this.userID;
 
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             ResultSet resultado=sentencia.executeQuery(consulta);
 
             if (resultado.next()){
@@ -198,7 +198,7 @@ public class Usuario {
 
         System.out.println(consulta);
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             ResultSet resultado=sentencia.executeQuery(consulta);
 
             if (resultado.next()){
@@ -215,7 +215,7 @@ public class Usuario {
                     }
                 }
             }
-            //CConexionMySQL.cerrar();
+            //ConexionMySQL.cerrar();
 
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
@@ -233,7 +233,7 @@ public class Usuario {
         int rIntentos = -1;
         String consulta="SELECT * FROM mydb.Usuarios WHERE UserID="+userID;
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             ResultSet resultado=sentencia.executeQuery(consulta);
 
             if (resultado.next()){
@@ -264,7 +264,7 @@ public class Usuario {
                 "WHERE `UserID` = "+userID;
         System.out.println(consulta);
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
@@ -283,7 +283,7 @@ public class Usuario {
                 "WHERE `UserID` = "+userID;
         System.out.println(consulta);
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
@@ -291,7 +291,8 @@ public class Usuario {
         }
     }
 
-
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
     //Gets and Sets
     public Integer getTipo() {
         return tipo;
@@ -340,4 +341,113 @@ public class Usuario {
     public void setUserID(String userID) {
         this.userID = userID;
     }
+
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+
+    public static String[] getReporteUsuarioxEstadoTitulos() {
+        String[] columnNames = {"Usuarios Activos", "Usuarios Inactivos"};
+        return columnNames;
+    }
+
+    public static Object[][] getReporteUsuarioxEstado() {
+        Object[][] retorno = null;
+
+        String consulta="SELECT\n" +
+                "    SUM(CASE WHEN estado = 1 THEN 1 ELSE 0 END) AS Usuarios_Activos,\n" +
+                "    SUM(CASE WHEN estado = 0 THEN 1 ELSE 0 END) AS Usuarios_Inactivos\n" +
+                "FROM mydb.usuarios;";
+
+        try {
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
+            ResultSet resultado=sentencia.executeQuery(consulta);
+
+            if (resultado.next()){
+                Object[][] aux = {
+                        {resultado.getInt (1), resultado.getInt (2)}
+                };
+                retorno = aux;
+            }
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
+        }
+        return retorno;
+    }
+
+    //**********************************************************************************************************//
+
+    public static int getReporteTotalRegistros(){
+        int retorno = -1;
+
+        String consulta="SELECT count(*) FROM mydb.usuarios;";
+
+        try {
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
+            ResultSet resultado=sentencia.executeQuery(consulta);
+
+            if (resultado.next()){
+                retorno = resultado.getInt (1);
+            }
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
+        }
+        return retorno;
+    }
+
+    //**********************************************************************************************************//
+
+    public static String[] getReporteUsuarioxTipoTitulos() {
+        String[] columnNames = {"USUARIO_BASICO",
+                "USUARIO_ADMIN_PERSONAS",
+                "USUARIO_ADMIN_ITEMS",
+                "USUARIO_ADMIN_CAMPANIA",
+                "USUARIO_ADMIN_SEGURIDAD"};
+        return columnNames;
+    }
+
+
+    public static Object[][] getReporteUsuarioxTipo() {
+        Object[][] retorno = null;
+
+        String consulta="SELECT\n" +
+                "    SUM(CASE WHEN SUBSTR(Tipo, 1, 1) = '1' THEN 1 ELSE 0 END) AS campo_1,\n" +
+                "    SUM(CASE WHEN SUBSTR(Tipo, 2, 1) = '1' THEN 1 ELSE 0 END) AS campo_2,\n" +
+                "    SUM(CASE WHEN SUBSTR(Tipo, 3, 1) = '1' THEN 1 ELSE 0 END) AS campo_3,\n" +
+                "    SUM(CASE WHEN SUBSTR(Tipo, 4, 1) = '1' THEN 1 ELSE 0 END) AS campo_4,\n" +
+                "    SUM(CASE WHEN SUBSTR(Tipo, 5, 1) = '1' THEN 1 ELSE 0 END) AS campo_5\n" +
+                "FROM mydb.usuarios;";
+
+        try {
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
+            ResultSet resultado=sentencia.executeQuery(consulta);
+
+            if (resultado.next()){
+                Object[][] aux = {
+                        {resultado.getInt (1),
+                                resultado.getInt (2),
+                                resultado.getInt (3),
+                                resultado.getInt (4),
+                                resultado.getInt (5)}
+                };
+                retorno = aux;
+            }
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
+        }
+        return retorno;
+    }
+
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
 }

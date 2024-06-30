@@ -1,7 +1,6 @@
 package Vista;
 
-import Controlador.Raices.ControladorUsuarioInterno;
-import Modelo.Tools;
+import Controlador.Raices.ControladorCampania;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,47 +9,54 @@ import java.awt.event.ActionListener;
 import java.util.Objects;
 
 /**
- * Clase "VistaUsuarioInterno".
- * Esta vista se utiliza para mostrar las operaciones y acciones de un usuario basico.
+ * Clase que se usa para mostrar las caracteristicas de una campaña publicitaria.
  */
-public class VistaUsuarioInterno extends JFrame implements ActionListener {
+public class VistaCampania extends JFrame implements ActionListener {
+    private JPanel panel1;
+    private JTextField txtNombre;
+    private JTextField txtSinopsis;
+    private JTextArea  txtDescripcion;
+    private JTextField txtLink;
+    private JLabel lblImagen;
+    private JButton btnGuardar;
+    private JButton btnCancelar;
+    private JButton btnGenerarBanner;
     private JButton btnSalir;
     private JButton btnModificar;
-    private JButton btnGenerarBanner;
-    private JTextField txtDNI;
-    private JTextField txtNombre;
-    private JTextField txtApellido;
-    private JTextField txtLegajo;
-    private JTextField txtCorreo;
-    private JTextField txtTelefono;
-    private JTextField txtEquipo;
-    private JTextField txtArea;
-    private JTextField txtGerencia;
-    private JButton btnGuardar;
-    private JPanel panel1;
-    private JLabel lblImagen;
-    private JButton btnCancelar;
+    private JCheckBox chkVigente;
+    private JButton btnEditarFechaDesde;
+    private JTextField txtFechaDesde;
+    private JTextField txtFechaHasta;
+    private JButton btnEditarFechaHasta;
 
-    private ControladorUsuarioInterno controlador;
+    private ControladorCampania controlador;
     private JFrame vistaPadre;
     private boolean closeOnExit = true;
+
+    /**
+     * Para pruebas aisladas.
+     * @param args
+     */
+    public static void main(String[] args) {
+        VistaCampania v = new VistaCampania();
+    }
 
     /**
      * Constructor basico, para pruebas de entorno.
      * @deprecated
      */
-    public VistaUsuarioInterno() {
+    public VistaCampania() {
         initComponents();
-        controlador = new ControladorUsuarioInterno(this);
+        controlador = new ControladorCampania(this);
     }
 
     /**
      * Constructor de acceso directo. Es el que se utiliza cuando accede un usuario basico.
      * @param clave
      */
-    public VistaUsuarioInterno(int clave) {
+    public VistaCampania(int clave) {
         initComponents();
-        controlador = new ControladorUsuarioInterno(this,clave);
+        controlador = new ControladorCampania(this,clave);
     }
 
     /**
@@ -59,10 +65,10 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
      * @param vistaPadre
      * @param clave
      */
-    public VistaUsuarioInterno(JFrame vistaPadre,int clave) {
+    public VistaCampania(JFrame vistaPadre,int clave) {
         this.closeOnExit=false;
         initComponents();
-        controlador = new ControladorUsuarioInterno(this,clave);
+        controlador = new ControladorCampania(this,clave);
         this.vistaPadre = vistaPadre;
     }
 
@@ -73,12 +79,12 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
      * @param vistaPadre
      * @param clave
      * @param modo puede ser ControladorUsuarioInterno.MODO_ADD o ControladorUsuarioInterno.MODO_EDICION
-     * @see ControladorUsuarioInterno
+     * @see ControladorCampania
      */
-    public VistaUsuarioInterno(JFrame vistaPadre,int clave, int modo) {
+    public VistaCampania(JFrame vistaPadre,int clave, int modo) {
         this.closeOnExit=false;
         initComponents();
-        controlador = new ControladorUsuarioInterno(this,clave,modo);
+        controlador = new ControladorCampania(this,clave,modo);
         this.vistaPadre = vistaPadre;
     }
 
@@ -96,17 +102,10 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
         JLabel background = new JLabel(icon);
         lblImagen.setText("");
         lblImagen.setIcon(icon);
-        //background = new JLabel(new ImageIcon(ImageIO.read(new File("E:\\10.GDevelop\\Background.png"))));
 
-        //set layout
-        //this.setContentPane(background);
         this.setContentPane(panel1);
         panel1.setBackground(new Color(255,255,255));
-        //this.setLayout(new GridLayout());
-        //this.add(panel1);
 
-        //definiciones de elementos
-        bloquearEdicion();
 
         //definiciones de componentes
         this.btnSalir.setActionCommand("aBotonSalir");
@@ -114,49 +113,52 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
         this.btnModificar.setActionCommand("aBotonModificar");
         this.btnGuardar.setActionCommand("aBotonGuardar");
         this.btnCancelar.setActionCommand("aBotonCancelar");
+        this.btnEditarFechaHasta.setActionCommand("aBotonEditarFechaHasta");
+        this.btnEditarFechaDesde.setActionCommand("aBotonEditarFechaDesde");
+
         this.btnSalir.addActionListener(this);
         this.btnGenerarBanner.addActionListener(this);
         this.btnModificar.addActionListener(this);
         this.btnGuardar.addActionListener(this);
         this.btnCancelar.addActionListener(this);
+        this.btnEditarFechaDesde.addActionListener(this);
+        this.btnEditarFechaHasta.addActionListener(this);
+
+        //definiciones de elementos
+        bloquearEdicion();
 
         //definiciones generales
-        this.setTitle("Sistema de Gestion de QR. Vista Usuario Interno");
-        //if (this.closeOnExit){this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);}
-        //else{this.setDefaultCloseOperation((JFrame.DISPOSE_ON_CLOSE));}
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setTitle("Sistema de Gestion de QR. Vista Campaña Publicitaria");
+        if (this.closeOnExit){this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);}
+        else{this.setDefaultCloseOperation((JFrame.DISPOSE_ON_CLOSE));}
         this.pack();
         //this.setSize(600,600);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-
     }
 
     /**
      * Permite bloquear la edicion de los campos de la vista.
      */
     public void bloquearEdicion() {
-        this.txtDNI.setEnabled(false);
         this.txtNombre.setEnabled(false);
-        this.txtApellido.setEnabled(false);
-        this.txtLegajo.setEnabled(false);
-        this.txtCorreo.setEnabled(false);
-        this.txtTelefono.setEnabled(false);
-        this.txtEquipo.setEnabled(false);
-        this.txtArea.setEnabled(false);
-        this.txtGerencia.setEnabled(false);
+        this.txtSinopsis.setEnabled(false);
+        this.txtDescripcion.setEnabled(false);
+        this.chkVigente.setEnabled(false);
+        this.txtLink.setEnabled(false);
+        this.txtFechaDesde.setEnabled(false);
+        this.txtFechaHasta.setEnabled(false);
 
-        this.txtDNI.setDisabledTextColor(new Color(25, 112, 74));
         this.txtNombre.setDisabledTextColor(new Color(25, 112, 74));
-        this.txtApellido.setDisabledTextColor(new Color(25, 112, 74));
-        this.txtLegajo.setDisabledTextColor(new Color(25, 112, 74));
-        this.txtCorreo.setDisabledTextColor(new Color(25, 112, 74));
-        this.txtTelefono.setDisabledTextColor(new Color(25, 112, 74));
-        this.txtEquipo.setDisabledTextColor(new Color(25, 112, 74));
-        this.txtArea.setDisabledTextColor(new Color(25, 112, 74));
-        this.txtGerencia.setDisabledTextColor(new Color(25, 112, 74));
+        this.txtSinopsis.setDisabledTextColor(new Color(25, 112, 74));
+        this.txtDescripcion.setDisabledTextColor(new Color(25, 112, 74));
+        this.txtLink.setDisabledTextColor(new Color(25, 112, 74));
+        this.txtFechaDesde.setDisabledTextColor(new Color(25, 112, 74));
+        this.txtFechaHasta.setDisabledTextColor(new Color(25, 112, 74));
 
+        btnEditarFechaDesde.setEnabled(false);
+        btnEditarFechaHasta.setEnabled(false);
         btnModificar.setEnabled(true);
         btnModificar.setVisible(true);
         btnSalir.setEnabled(true);
@@ -176,16 +178,17 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
     public void habilitarEdicion() {
         //this.txtDNI.setEnabled(true);
         this.txtNombre.setEnabled(true);
-        this.txtApellido.setEnabled(true);
-        this.txtLegajo.setEnabled(true);
-        this.txtCorreo.setEnabled(true);
-        this.txtTelefono.setEnabled(true);
-        this.txtEquipo.setEnabled(true);
-        this.txtArea.setEnabled(true);
-        this.txtGerencia.setEnabled(true);
+        this.txtSinopsis.setEnabled(true);
+        this.txtDescripcion.setEnabled(true);
+        this.chkVigente.setEnabled(true);
+        this.txtLink.setEnabled(true);
+        this.txtFechaDesde.setEnabled(false);
+        this.txtFechaHasta.setEnabled(false);
 
         this.txtNombre.requestFocus();
 
+        btnEditarFechaDesde.setEnabled(true);
+        btnEditarFechaHasta.setEnabled(true);
         btnModificar.setEnabled(false);
         btnModificar.setVisible(false);
         btnSalir.setEnabled(false);
@@ -229,6 +232,24 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
             controlador.accionBotonCancelar();
             if (this.vistaPadre!=null){((VistaAdministrador)this.vistaPadre).refrescarTabla();}
         }
+        if ("aBotonEditarFechaDesde".equals(e.getActionCommand())) {
+            String selectedDate = SelectorFechas.showDialog(this);
+            if(selectedDate!=null) {
+                this.txtFechaDesde.setText(selectedDate);
+            }
+            else{
+                Dialogos.advertencia("No se selecciono ninguna fecha",this);
+            }
+        }
+        if ("aBotonEditarFechaHasta".equals(e.getActionCommand())) {
+            String selectedDate = SelectorFechas.showDialog(this);
+            if(selectedDate!=null) {
+                this.txtFechaHasta.setText(selectedDate);
+            }
+            else{
+                Dialogos.advertencia("No se selecciono ninguna fecha",this);
+            }
+        }
     }
 
     /**
@@ -238,24 +259,32 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
     private boolean formularioCompleto(){
         boolean retorno = true;
 
-        if(Objects.equals(this.txtDNI.getText(), "")){retorno = false;}
         if(Objects.equals(this.txtNombre.getText(), "")){retorno = false;}
-        if(Objects.equals(this.txtApellido.getText(), "")){retorno = false;}
-        if(Objects.equals(this.txtLegajo.getText(), "")){retorno = false;}
-
-        if(!Tools.esNumerica(this.txtDNI.getText())){retorno = false;}
-        if(!Tools.esNumerica(this.txtLegajo.getText())){retorno = false;}
+        if(Objects.equals(this.txtSinopsis.getText(), "")){retorno = false;}
+        if(Objects.equals(this.txtDescripcion.getText(), "")){retorno = false;}
+        if(Objects.equals(this.txtLink.getText(), "")){retorno = false;}
+        //if(!chkVigente.isSelected()){retorno = false; }
+        if(Objects.equals(this.txtFechaDesde.getText(), "")){retorno = false;}
+        if(Objects.equals(this.txtFechaHasta.getText(), "")){retorno = false;}
 
         return retorno;
     }
 
     //Sets and Gets
-    public String getTxtDNI() {
-        return txtDNI.getText();
+    public String getTxtFechaHasta() {
+        return txtFechaHasta.getText();
     }
 
-    public void setTxtDNI(String txtDNI) {
-        this.txtDNI.setText(txtDNI);
+    public void setTxtFechaHasta(String txtFechaHasta) {
+        this.txtFechaHasta.setText(txtFechaHasta);
+    }
+
+    public String getTxtFechaDesde() {
+        return txtFechaDesde.getText();
+    }
+
+    public void setTxtFechaDesde(String txtFechaDesde) {
+        this.txtFechaDesde.setText(txtFechaDesde);
     }
 
     public String getTxtNombre() {
@@ -266,60 +295,36 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
         this.txtNombre.setText(txtNombre);
     }
 
-    public String getTxtApellido() {
-        return txtApellido.getText();
+    public String getTxtSinopsis() {
+        return txtSinopsis.getText();
     }
 
-    public void setTxtApellido(String txtApellido) {
-        this.txtApellido.setText(txtApellido);
+    public void setTxtSinopsis(String txtSinopsis) {
+        this.txtSinopsis.setText(txtSinopsis);
     }
 
-    public String getTxtLegajo() {
-        return txtLegajo.getText();
+    public String getTxtDescripcion() {
+        return txtDescripcion.getText();
     }
 
-    public void setTxtLegajo(String txtLegajo) {
-        this.txtLegajo.setText(txtLegajo);
+    public void setTxtDescripcion(String txtDescripcion) {
+        this.txtDescripcion.setText(txtDescripcion);
     }
 
-    public String getTxtCorreo() {
-        return txtCorreo.getText();
+    public String getTxtLink() {
+        return txtLink.getText();
     }
 
-    public void setTxtCorreo(String txtCorreo) {
-        this.txtCorreo.setText(txtCorreo);
+    public void setTxtLink(String txtLink) {
+        this.txtLink.setText(txtLink);
     }
 
-    public String getTxtTelefono() {
-        return txtTelefono.getText();
+    public boolean getChkVigente() {
+        return chkVigente.isSelected();
     }
 
-    public void setTxtTelefono(String txtTelefono) {
-        this.txtTelefono.setText(txtTelefono);
-    }
-
-    public String getTxtEquipo() {
-        return txtEquipo.getText();
-    }
-
-    public void setTxtEquipo(String txtEquipo) {
-        this.txtEquipo.setText(txtEquipo);
-    }
-
-    public String getTxtArea() {
-        return txtArea.getText();
-    }
-
-    public void setTxtArea(String txtArea) {
-        this.txtArea.setText(txtArea);
-    }
-
-    public String getTxtGerencia() {
-        return txtGerencia.getText();
-    }
-
-    public void setTxtGerencia(String txtGerencia) {
-        this.txtGerencia.setText(txtGerencia);
+    public void setChkVigente(boolean chkVigente) {
+        this.chkVigente.setSelected(chkVigente);
     }
 
     /**
@@ -328,18 +333,17 @@ public class VistaUsuarioInterno extends JFrame implements ActionListener {
      * Deja el focus en el primer elemento del formulario.
      */
     public void vaciarCampos(){
-        txtDNI.setText("");
         txtNombre.setText("");
-        txtApellido.setText("");
-        txtLegajo.setText("");
-        txtCorreo.setText("");
-        txtTelefono.setText("");
-        txtEquipo.setText("");
-        txtArea.setText("");
-        txtGerencia.setText("");
+        txtSinopsis.setText("");
+        txtDescripcion.setText("");
+        txtFechaDesde.setText("");
+        txtFechaHasta.setText("");
+        txtLink.setText("");
 
         this.habilitarEdicion();
-        this.txtDNI.setEnabled(true);
-        this.txtDNI.requestFocus();
+        this.txtNombre.setEnabled(true);
+        this.txtNombre.requestFocus();
     }
+
+
 }

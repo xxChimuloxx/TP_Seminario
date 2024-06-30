@@ -1,10 +1,12 @@
 package Modelo;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.WriterException;
+import Vista.Dialogos;
+import com.google.zxing.*;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import javax.imageio.ImageIO;
@@ -13,6 +15,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -39,7 +45,7 @@ public class CodigoQR {
         String consulta="SELECT * FROM mydb.codigosqr WHERE `Tipo`="+tipo+" and `ID Objeto`="+clave;
 
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             ResultSet resultado=sentencia.executeQuery(consulta);
 
             if (!resultado.next()){
@@ -47,10 +53,10 @@ public class CodigoQR {
                 consulta="INSERT INTO `mydb`.`CodigosQR` (`hash`, `Descripcion`, `Tipo`, `ID Objeto`)\n" +
                                 "VALUES ('"+timestamp+"', 'Codigo QR: tipo:"+tipo+" - clave: "+clave+"', "+tipo+", "+clave+");";
 
-                sentencia= CConexionMySQL.obtener().createStatement();
+                sentencia= ConexionMySQL.obtener().createStatement();
                     sentencia.executeUpdate(consulta);
             }
-            //CConexionMySQL.cerrar();
+            //ConexionMySQL.cerrar();
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al registrar el código QR: " + e.getMessage());
@@ -152,12 +158,76 @@ public class CodigoQR {
             }
         });
 
+        JButton printButton = new JButton("Imprimir QR");
+        printButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String[] opciones = {"Imprimir Normal", "Imprimir en Mosaico"};
+                int tipoImpresion = Dialogos.seleccion(opciones,null);
+
+                PrinterJob printerJob = PrinterJob.getPrinterJob();
+                printerJob.setPrintable(new Printable() {
+                    @Override
+                    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+                        if (pageIndex != 0) {
+                            return NO_SUCH_PAGE;
+                        }
+
+                        Graphics2D g2d = (Graphics2D) graphics;
+                        g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+
+                        double pageWidth = pageFormat.getImageableWidth();
+                        double pageHeight = pageFormat.getImageableHeight();
+                        double imageWidth = qrImage.getWidth();
+                        double imageHeight = qrImage.getHeight();
+
+                        double scale = Math.min(pageWidth / imageWidth, pageHeight / imageHeight);
+
+                        int scaledWidth = (int) (imageWidth * scale);
+                        int scaledHeight = (int) (imageHeight * scale);
+
+                        //impresion normal
+                        if (tipoImpresion==0){g2d.drawImage(qrImage, 0, 0, scaledWidth, scaledHeight, null);}
+
+                        //impresion mosaico
+                        if (tipoImpresion==1){
+                            int columns = (int) Math.ceil(pageWidth / imageWidth)+1;
+                            int rows = (int) Math.ceil(pageHeight / imageHeight)+1;
+                            scale = 0.5;
+                            scaledWidth = (int) (imageWidth * scale);
+                            scaledHeight = (int) (imageHeight * scale);
+                            for (int row = 0; row < rows; row++) {
+                                for (int col = 0; col < columns; col++) {
+                                    int x = (int)(col * scaledWidth);
+                                    int y = (int) (row * scaledHeight);
+                                    g2d.drawImage(qrImage, x, y, scaledWidth, scaledHeight,null);
+                                }
+                            }
+                        };
+
+                        return PAGE_EXISTS;
+                    }
+                });
+
+                boolean doPrint = printerJob.printDialog();
+                if (doPrint) {
+                    try {
+                        printerJob.print();
+                    } catch (PrinterException ex) {
+                        JOptionPane.showMessageDialog(null, "Error al imprimir la imagen: " + ex.getMessage());
+                    }
+                }
+            }
+        });
+
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(label, BorderLayout.CENTER);
         //panel.add(saveButton, BorderLayout.SOUTH);
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(saveButton);
+        buttonPanel.add(printButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
+
 
         //JOptionPane.showMessageDialog(null, panel, "Código QR Generado", JOptionPane.PLAIN_MESSAGE);
         Image imageA = Toolkit.getDefaultToolkit().getImage("src/Recursos/IconoS21.png");
@@ -351,4 +421,53 @@ public class CodigoQR {
 
         return combined;
     }
+
+    /**
+     * Metodo que permite la decodificacion de una codigo QR.
+     * Para el alcance del presente y ante la falta de un lector de codigos QR. La funcion se realiza a traves de
+     * la carga de una imagen y su analisis posterior.
+     * @param panel
+     * @return
+     */
+    public static String ScanQR(JPanel panel) {
+        JFileChooser fileChooser = new JFileChooser();
+        String decodedText = "";
+        int result = fileChooser.showOpenDialog(panel);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            try {
+                BufferedImage bufferedImage = ImageIO.read(selectedFile);
+                decodedText = decodeQRCode(bufferedImage);
+                if (decodedText == null) {
+                    JOptionPane.showMessageDialog(panel, "No se encontró un código QR en la imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                //else {
+                    //JOptionPane.showMessageDialog(panel, "Datos del Código QR:\n" + decodedText, "QR Code Data", JOptionPane.INFORMATION_MESSAGE);
+                    // Process the decoded text
+                    //processDecodedText(decodedText, panel);
+                //}
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(panel, "No se pudo leer el archivo de imagen: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return decodedText;
+    }
+
+    /**
+     * Metodo que permite la decodificacion de una codigo QR. Este metodo es puntualmente el que decodifica.
+     * @param qrImage
+     * @return
+     */
+    private static String decodeQRCode(BufferedImage qrImage) {
+        try {
+            LuminanceSource source = new BufferedImageLuminanceSource(qrImage);
+            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+            Result result = new QRCodeReader().decode(bitmap);
+            return result.getText();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Se produjo un error al decodificar el QR: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+    }
+
 }

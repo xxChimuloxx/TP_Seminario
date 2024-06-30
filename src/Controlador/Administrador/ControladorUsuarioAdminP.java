@@ -1,27 +1,29 @@
-package Controlador;
+package Controlador.Administrador;
 
+import Controlador.Raices.ControladorUsuarioInterno;
 import Modelo.Persona;
 import Modelo.Usuario;
-import Vista.Dialogos;
-import Vista.VistaLogon;
-import Vista.VistaUsuarioAdminP;
-import Vista.VistaUsuarioInterno;
+import Vista.*;
 
 import javax.swing.*;
 
 /**
  * Clase que se utiliza para gestionar las acciones que realicen los usuarios administradores de personas.
  */
-public class ControladorUsuarioAdminP {
+public class ControladorUsuarioAdminP implements ControladorInterfaz {
 
-    private VistaUsuarioAdminP vista;
+    private VistaAdministrador vista;
+    private int CLAVE_POS = 1;
 
     /**
      * Constructor de la clase
      * @param vista
      */
-    public ControladorUsuarioAdminP(VistaUsuarioAdminP vista) {
+    public ControladorUsuarioAdminP(VistaAdministrador vista) {
         this.vista = vista;
+
+        this.setBotonEspecial1("");
+        this.setBotonEspecial2("");
     }
 
     /**
@@ -29,7 +31,7 @@ public class ControladorUsuarioAdminP {
      * @param args
      */
     public static void main(String[] args) {
-        VistaUsuarioAdminP v = new VistaUsuarioAdminP();
+        VistaAdministrador v = new VistaAdministrador(VistaAdministrador.VISTA_PERSONAS,true);
     }
 
     /**
@@ -58,7 +60,8 @@ public class ControladorUsuarioAdminP {
      */
     public void accionBotonModificar(int clave){
         if(clave!=-1) {
-            VistaUsuarioInterno v = new VistaUsuarioInterno(vista,clave, ControladorUsuarioInterno.MODO_EDICION);
+            int value = Integer.parseInt(this.vista.getTableModel().getValueAt(clave,this.CLAVE_POS).toString());
+            VistaUsuarioInterno v = new VistaUsuarioInterno(vista,value, ControladorUsuarioInterno.MODO_EDICION);
         }
     }
 
@@ -68,7 +71,8 @@ public class ControladorUsuarioAdminP {
      */
     public void accionBotonConsultar(int clave){
         if(clave!=-1) {
-            VistaUsuarioInterno v = new VistaUsuarioInterno(vista,clave);
+            int value = Integer.parseInt(this.vista.getTableModel().getValueAt(clave,this.CLAVE_POS).toString());
+            VistaUsuarioInterno v = new VistaUsuarioInterno(vista,value);
         }
     }
 
@@ -79,10 +83,12 @@ public class ControladorUsuarioAdminP {
     public void accionBotonBorrar(int clave){
         if(clave!=-1) {
             if(Dialogos.confirmacionAccion()) {
-                Persona persona = new Persona(clave);
+
+                int value = Integer.parseInt(this.vista.getTableModel().getValueAt(clave,this.CLAVE_POS).toString());
+                Persona persona = new Persona(value);
                 persona.eliminar();
 
-                Usuario usuario = new Usuario(String.valueOf(clave));
+                Usuario usuario = new Usuario(String.valueOf(value));
                 usuario.eliminar();
 
                 vista.refrescarTabla();
@@ -91,10 +97,38 @@ public class ControladorUsuarioAdminP {
     }
 
     /**
+     * Gestiona las acciones correspondientes al BotonEspecial1, no se usa.
+     * @param clave
+     */
+    public void accionBotonEspecial1(int clave){}
+
+    /**
+     * Gestiona las acciones correspondientes al BotonEspecial2, no se usa.
+     * @param clave
+     */
+    public void accionBotonEspecial2(int clave){}
+
+    /**
      * Fuerza la carga de la tabla de datos con el objeto de refrescar la informacion de la misma.
      * @param tblDatos
      */
     public void cargarTabla(JTable tblDatos) {
         Persona.listarPersonas(tblDatos);
     }
+
+    /**
+     * Determina si sera necesario utilizar el boton especial #1
+     * @param texto
+     */
+    public void setBotonEspecial1(String texto){
+        vista.setBotonEspecial1(texto);
+    }
+
+    /**
+     * Determina si sera necesario utilizar el boton especial #1
+     * @param texto
+     */
+    public void setBotonEspecial2(String texto){
+        vista.setBotonEspecial2(texto);
+    }       
 }

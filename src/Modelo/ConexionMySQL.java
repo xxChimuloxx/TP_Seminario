@@ -11,7 +11,7 @@ import java.util.Properties;
 /**
  * Clase que permite gestionar las conexiones SQL contra el motor de base de datos
  */
-public class CConexionMySQL {
+public class ConexionMySQL {
 
     private static Connection cnx = null;
 

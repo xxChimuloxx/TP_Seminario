@@ -2,6 +2,8 @@ package Controlador;
 
 import Vista.*;
 
+import javax.swing.*;
+
 /**
  * Clase de prueba para concentrar los accesos a las distintas vistas/controladores de la aplicacion.
  */
@@ -22,23 +24,34 @@ public class ControladorSelector {
      * @param args
      */
     public static void main(String[] args) {
-        VistaSelector v = new VistaSelector();
+        VistaSelector v = new VistaSelector(1,1,0,1,1,"Jose",-1);
     }
 
     //Controlador de acciones de los botones
     public void accionBotonSalir(){
         System.exit(0);
     }
-    public void accionBotonLogon(){
-        VistaLogon v = new VistaLogon();
-    }
-    public void accionBotonUsuarioInterno(){
-        VistaUsuarioInterno v = new VistaUsuarioInterno();
+    public void accionBotonUsuarioInterno(int usuario){
+        VistaUsuarioInterno v = new VistaUsuarioInterno(usuario);
     }
     public void accionBotonSeguridad(){
-        VistaSeguridad v = new VistaSeguridad();
+        VistaAdministrador v = new VistaAdministrador(VistaAdministrador.VISTA_SEGURIDAD,false);
     }
     public void accionBotonUsuarioAdminP(){
-        VistaUsuarioAdminP v = new VistaUsuarioAdminP();
+        VistaAdministrador v = new VistaAdministrador(VistaAdministrador.VISTA_PERSONAS,false);
+    }
+    public void accionBotonUsuarioAdminI(){
+        VistaAdministrador v = new VistaAdministrador(VistaAdministrador.VISTA_ITEMS,false);
+    }
+    public void accionBotonUsuarioAdminC(){
+        VistaAdministrador v = new VistaAdministrador(VistaAdministrador.VISTA_CAMPANIAS,false);
+    }
+    public void accionaBotonReportes(){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new ReportesSelector().setVisible(true);
+            }
+        });
     }
 }

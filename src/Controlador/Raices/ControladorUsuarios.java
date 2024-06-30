@@ -1,4 +1,4 @@
-package Controlador;
+package Controlador.Raices;
 
 import Modelo.Persona;
 import Modelo.Usuario;
@@ -45,7 +45,7 @@ public class ControladorUsuarios {
     public ControladorUsuarios(VistaUsuarios vista,int clave,int modo) {
         this.vista = vista;
         this.usuario = new Usuario(String.valueOf(clave));
-        actualizarVistaDatosUsuario();
+        if(clave!=-1){actualizarVistaDatosUsuario();}
 
         System.out.println(modo);
         if (modo == this.MODO_EDICION){
@@ -63,7 +63,7 @@ public class ControladorUsuarios {
      * @param args
      */
     public static void main(String[] args) {
-        //VistaUsuarios v = new VistaUsuarios(12345003);
+        VistaUsuarios v = new VistaUsuarios(null, 12345003);
     }
 
     /**
@@ -83,10 +83,9 @@ public class ControladorUsuarios {
             this.usuario.setUserID(this.vista.getTxtUserID());
             this.usuario.setPassword(this.vista.getTxtPassword());
             this.usuario.setDescripcion(this.vista.getTxtDescripcion());
-            this.usuario.setTipo(Integer.valueOf(this.vista.getTxtTipo()));
+            this.usuario.setTipo(this.vista.getTipo());
             this.usuario.setIntentos(Integer.valueOf(this.vista.getTxtIntentos()));
-            this.usuario.setEstado(Integer.valueOf(this.vista.getTxtEstado()));
-
+            this.usuario.setEstado(this.vista.getEstado());
 
             if(this.usuario.existeUsuario()){
                 this.usuario.actualizar();
@@ -134,9 +133,11 @@ public class ControladorUsuarios {
         this.vista.setTxtUserID(this.usuario.getUserID());
         this.vista.setTxtPassword(this.usuario.getPassword());
         this.vista.setTxtDescripcion(this.usuario.getDescripcion());
-        this.vista.setTxtTipo(String.valueOf(this.usuario.getTipo()));
         this.vista.setTxtIntentos(String.valueOf(this.usuario.getIntentos()));
-        this.vista.setTxtEstado(String.valueOf(this.usuario.getEstado()));
+
+        this.vista.setEstado(this.usuario.getEstado());
+        this.vista.setTipo(this.usuario.getTipo());
+
     }
 }
 

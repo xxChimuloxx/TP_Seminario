@@ -1,5 +1,6 @@
-package Controlador;
+package Controlador.Raices;
 
+import Controlador.ControladorLogon;
 import Modelo.Usuario;
 import Vista.Dialogos;
 import Vista.VistaUsuarioInterno;

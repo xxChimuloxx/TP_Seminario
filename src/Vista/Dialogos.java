@@ -44,4 +44,17 @@ public class Dialogos {
                 JOptionPane.WARNING_MESSAGE);
     }
 
+    /**
+     * genera un mensaje de seleccion en la aplciacion. look centralizado.
+     * @param options
+     * @param vista
+     * @return
+     */
+    public static int seleccion(String[] options, JFrame vista){
+        int choice = JOptionPane.showOptionDialog(null, "Elige una opción:", "Diálogo de Opciones",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+        return choice;
+    }
+
 }

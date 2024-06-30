@@ -1,7 +1,5 @@
 package Modelo;
 
-import Vista.Dialogos;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
@@ -9,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Clase persona.
@@ -30,7 +30,7 @@ public class Persona {
      * Constructor de Persona.
      *
      * @param dni Integer. Construye Persona en funcion de los datos que se recuperan para dni desde la base de datos.
-     * @apiNote  Interactua con la clase CConexionMySQL
+     * @apiNote  Interactua con la clase ConexionMySQL
      * @exception SQLException
      * @exception ClassNotFoundException
      *
@@ -47,7 +47,7 @@ public class Persona {
         String consulta="SELECT * FROM mydb.personas WHERE DNI="+dni;
 
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             ResultSet resultado=sentencia.executeQuery(consulta);
 
             if (resultado.next()){
@@ -62,7 +62,7 @@ public class Persona {
                 this.area = resultado.getString(9);
                 this.gerencia = resultado.getString(10);
             }
-            //CConexionMySQL.cerrar();
+            //ConexionMySQL.cerrar();
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al recuperar los datos de la Persona: " + e.getMessage());
@@ -79,14 +79,14 @@ public class Persona {
         String consulta="SELECT * FROM mydb.personas WHERE DNI="+dni;
 
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             ResultSet resultado=sentencia.executeQuery(consulta);
 
             if (resultado.next()){
                 this.dni = resultado.getInt(2);
                 retorno = true;
             }
-            //CConexionMySQL.cerrar();
+            //ConexionMySQL.cerrar();
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al validar la existencia de la Persona: " + e.getMessage());
@@ -173,7 +173,7 @@ public class Persona {
     public void eliminar() {
         String consulta="DELETE FROM `mydb`.`Personas` WHERE `DNI` = " + this.dni + ";";
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
@@ -189,7 +189,7 @@ public class Persona {
                 "VALUES ("+this.dni+",'"+this.nombre+"','"+this.apellido+"',"+this.legajo+",'"+this.correo+"','"+this.telefono+"','"+this.equipo+"','"+this.area+"','"+this.gerencia+"'\n);";
         System.out.println(consulta);
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
@@ -202,7 +202,7 @@ public class Persona {
      * No recibe parametros.
      * Toma los valores vigentes en el objeto para hacer la actualizacion.
      *
-     * @apiNote  Interactua con la clase CConexionMySQL
+     * @apiNote  Interactua con la clase ConexionMySQL
      * @exception SQLException
      * @exception ClassNotFoundException
      *
@@ -222,7 +222,7 @@ public class Persona {
         System.out.println(consulta);
 
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
@@ -259,7 +259,7 @@ public class Persona {
         String consulta="SELECT * FROM mydb.personas;";
 
         try {
-            Statement sentencia= CConexionMySQL.obtener().createStatement();
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
             ResultSet resultado=sentencia.executeQuery(consulta);
 
             while (resultado.next()){
@@ -276,10 +276,280 @@ public class Persona {
                         resultado.getString(10)};
                 modelo.addRow(nuevaLinea);
             }
-            //CConexionMySQL.cerrar();
+            //ConexionMySQL.cerrar();
         } catch (SQLException | ClassNotFoundException | IOException e) {
             //e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al listar las personas de la base de datos: " + e.getMessage());
         }
     }
+
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+
+    public static int getReporteTotalRegistros(){
+        int retorno = -1;
+
+        String consulta="SELECT count(*) FROM mydb.personas;";
+
+        try {
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
+            ResultSet resultado=sentencia.executeQuery(consulta);
+
+            if (resultado.next()){
+                retorno = resultado.getInt (1);
+            }
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
+        }
+        return retorno;
+    }
+
+    public static int getReporteTotalEquipos(){
+        int retorno = -1;
+
+        String consulta="SELECT \n" +
+                "    COUNT(DISTINCT `personas`.`Equipo de Trabajo`) AS distintas\n" +
+                "FROM \n" +
+                "    mydb.personas;";
+
+        try {
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
+            ResultSet resultado=sentencia.executeQuery(consulta);
+
+            if (resultado.next()){
+                retorno = resultado.getInt (1);
+            }
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
+        }
+        return retorno;
+    }
+
+    public static int getReporteTotalAreas(){
+        int retorno = -1;
+
+        String consulta="SELECT \n" +
+                "    COUNT(DISTINCT `personas`.`Area`) AS distintas\n" +
+                "FROM \n" +
+                "    mydb.personas;";
+
+        try {
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
+            ResultSet resultado=sentencia.executeQuery(consulta);
+
+            if (resultado.next()){
+                retorno = resultado.getInt (1);
+            }
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
+        }
+        return retorno;
+    }
+
+    public static int getReporteTotalGerencias(){
+        int retorno = -1;
+
+        String consulta="SELECT \n" +
+                "    COUNT(DISTINCT `personas`.`Gerencia`) AS distintas\n" +
+                "FROM \n" +
+                "    mydb.personas;";
+
+        try {
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
+            ResultSet resultado=sentencia.executeQuery(consulta);
+
+            if (resultado.next()){
+                retorno = resultado.getInt (1);
+            }
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
+        }
+        return retorno;
+    }
+
+    //**********************************************************************************************************//
+
+    public static String[] getReportePersonaxEquipoTitulos() {
+        String[] columnNames = {"Equipo de Trabajo",
+                "Cantidad"};
+        return columnNames;
+    }
+
+    public static List<String[]> getReportePersonaxEquipo() {
+        List<String[]> retorno = null;
+
+        String consulta="SELECT \n" +
+                "\t`personas`.`Equipo de Trabajo`,\n" +
+                "    COUNT(*) AS total\n" +
+                "FROM mydb.personas\n" +
+                "GROUP BY `personas`.`Equipo de Trabajo`;";
+
+        try {
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
+            ResultSet resultado=sentencia.executeQuery(consulta);
+
+            List<String[]> aux = new ArrayList<>();
+            while (resultado.next()){
+                String[] elemento = {resultado.getString (1),String.valueOf(resultado.getInt (2))};
+                aux.add(elemento);
+            };
+            retorno = aux;
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
+        }
+        return retorno;
+    }
+
+    //**********************************************************************************************************//
+
+    public static String[] getReportePersonaxAreaTitulos() {
+        String[] columnNames = {"Area",
+                "Cantidad"};
+        return columnNames;
+    }
+
+    public static List<String[]> getReportePersonaxArea() {
+        List<String[]> retorno = null;
+
+        String consulta="SELECT \n" +
+                "\t`personas`.`Area`,\n" +
+                "    COUNT(*) AS total\n" +
+                "FROM mydb.personas\n" +
+                "GROUP BY `personas`.`Area`;";
+
+        try {
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
+            ResultSet resultado=sentencia.executeQuery(consulta);
+
+            List<String[]> aux = new ArrayList<>();
+            while (resultado.next()){
+                String[] elemento = {resultado.getString (1),String.valueOf(resultado.getInt (2))};
+                aux.add(elemento);
+            };
+            retorno = aux;
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
+        }
+        return retorno;
+    }
+
+    //**********************************************************************************************************//
+
+    public static String[] getReportePersonaxGerenciaTitulos() {
+        String[] columnNames = {"Gerencia",
+                "Cantidad"};
+        return columnNames;
+    }
+
+    public static List<String[]> getReportePersonaxGerencia() {
+        List<String[]> retorno = null;
+
+        String consulta="SELECT \n" +
+                "\t`personas`.`Gerencia`,\n" +
+                "    COUNT(*) AS total\n" +
+                "FROM mydb.personas\n" +
+                "GROUP BY `personas`.`Gerencia`;";
+
+        try {
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
+            ResultSet resultado=sentencia.executeQuery(consulta);
+
+            List<String[]> aux = new ArrayList<>();
+            while (resultado.next()){
+                String[] elemento = {resultado.getString (1),String.valueOf(resultado.getInt (2))};
+                aux.add(elemento);
+            };
+            retorno = aux;
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
+        }
+        return retorno;
+    }
+
+    //**********************************************************************************************************//
+
+    public static String[] getReporteEquiposxAreaTitulos() {
+        String[] columnNames = {"Equipo de Trabajo",
+                "Area",
+                "Cantidad"};
+        return columnNames;
+    }
+
+    public static List<String[]> getReporteEquiposxArea() {
+        List<String[]> retorno = null;
+
+        String consulta="SELECT \n" +
+                "\t`personas`.`Equipo de Trabajo`,\n" +
+                "    `personas`.`Area`,\n" +
+                "    COUNT(*) AS total\n" +
+                "FROM mydb.personas\n" +
+                "GROUP BY `personas`.`Equipo de Trabajo`,`personas`.`Area`;";
+
+        try {
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
+            ResultSet resultado=sentencia.executeQuery(consulta);
+
+            List<String[]> aux = new ArrayList<>();
+            while (resultado.next()){
+                String[] elemento = {resultado.getString (1),resultado.getString (2),String.valueOf(resultado.getInt (3))};
+                aux.add(elemento);
+            };
+            retorno = aux;
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
+        }
+        return retorno;
+    }
+
+    //**********************************************************************************************************//
+
+    public static String[] getReporteAreaxGerenciaTitulos() {
+        String[] columnNames = {"Area",
+                "Gerencia",
+                "Cantidad"};
+        return columnNames;
+    }
+
+    public static List<String[]> getReporteAreaxGerencia() {
+        List<String[]> retorno = null;
+
+        String consulta="SELECT \n" +
+                "\t`personas`.`Area`,\n" +
+                "    `personas`.`Gerencia`,\n" +
+                "    COUNT(*) AS total\n" +
+                "FROM mydb.personas\n" +
+                "GROUP BY `personas`.`Area`,`personas`.`Gerencia`;";
+
+        try {
+            Statement sentencia= ConexionMySQL.obtener().createStatement();
+            ResultSet resultado=sentencia.executeQuery(consulta);
+
+            List<String[]> aux = new ArrayList<>();
+            while (resultado.next()){
+                String[] elemento = {resultado.getString (1),resultado.getString (2),String.valueOf(resultado.getInt (3))};
+                aux.add(elemento);
+            };
+            retorno = aux;
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            //e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al recuperar informacion de la base de datos: " + e.getMessage());
+        }
+        return retorno;
+    }
+
+    //**********************************************************************************************************//
+
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+    //**********************************************************************************************************//
+
 }
