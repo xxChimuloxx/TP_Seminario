@@ -1,10 +1,9 @@
 package Controlador.Raices;
 
-import Modelo.Campania;
+import Modelo.ObjetosPersistentes.Campania;
 import Modelo.CodigoQR;
 import Vista.Dialogos;
 import Vista.VistaCampania;
-import Vista.VistaUsuarioInterno;
 import com.google.zxing.WriterException;
 
 import javax.swing.*;
@@ -61,7 +60,7 @@ public class ControladorCampania {
         this.campania = new Campania(ID);
         actualizarVistaDatosCampania();
 
-        System.out.println(modo);
+        //System.out.println(modo);
         if (modo == this.MODO_EDICION){
             vista.habilitarEdicion();
         }
@@ -143,14 +142,14 @@ public class ControladorCampania {
 
             this.campania.setId(this.ID);
 
-            if(this.campania.existeCampania(this.campania.getId())){
+            if(this.campania.existe(this.campania.getId())){
                 this.campania.actualizar();
             }
             else{
                 this.campania.insertar();
                 //cruce contra la tabla campania, verifico.
                 Campania campaniaAuxiliar = new Campania(this.ID);
-                if(!campaniaAuxiliar.existeCampania(this.ID)){
+                if(!campaniaAuxiliar.existe(this.ID)){
                     campaniaAuxiliar.setNombre(this.vista.getTxtNombre());
                     campaniaAuxiliar.setSinopsis(this.vista.getTxtSinopsis());
                     campaniaAuxiliar.setDescripcion(this.vista.getTxtDescripcion());

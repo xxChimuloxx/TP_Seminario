@@ -1,4 +1,6 @@
-package Modelo;
+package Modelo.ObjetosPersistentes;
+
+import Modelo.ConexionMySQL;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,7 +16,7 @@ import java.util.List;
  * Clase persona.
  * Representa a una persona fisica de la compañia segun el enfoque necesario por el area de personal
  */
-public class Persona {
+public class Persona extends ObjetoPersistente{
 
     private int dni;
     private String nombre;
@@ -36,15 +38,21 @@ public class Persona {
      *
      */
     public Persona(int dni) {
-        cargoPersona(dni);
+        this.queryClave = "dni";
+        this.queryBase = "personas";
+
+        this.claveNumerica = true;
+        this.claveIndex = 2;
+
+        selectQuery(dni);
     }
 
     /**
-     * Actualiza los datos del objeto con la informacion recuperada de la base de datos.
-     * @param dni
+     * Busca y Actualiza los datos del objeto con la informacion recuperada de la base de datos.
+     * @param id
      */
-    public void cargoPersona(int dni){
-        String consulta="SELECT * FROM mydb.personas WHERE DNI="+dni;
+    public void selectQuery(int id){
+        String consulta="SELECT * FROM mydb.personas WHERE DNI="+id;
 
         try {
             Statement sentencia= ConexionMySQL.obtener().createStatement();
@@ -70,26 +78,14 @@ public class Persona {
     }
 
     /**
-     * Verifica que persona que se pasa como parametro exista en la base de datos.
-     * @param dni
+     * verifica que existe el elemento en la base de datos.
+     * @param id
      * @return
      */
-    public boolean existePersona(int dni){
-        boolean retorno = false;
-        String consulta="SELECT * FROM mydb.personas WHERE DNI="+dni;
-
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            ResultSet resultado=sentencia.executeQuery(consulta);
-
-            if (resultado.next()){
-                this.dni = resultado.getInt(2);
-                retorno = true;
-            }
-            //ConexionMySQL.cerrar();
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al validar la existencia de la Persona: " + e.getMessage());
+    public boolean existe(int id){
+        boolean retorno = super.existe(id);
+        if(retorno){
+            this.dni = this.retornoClaveNumerica;
         }
         return retorno;
     }
@@ -168,33 +164,20 @@ public class Persona {
     }
 
     /**
-     * Elminina la persona en la base de datos con los registros de la clase.
+     * Metodo que elimina la campaña de la base de datos.     *
      */
-    public void eliminar() {
-        String consulta="DELETE FROM `mydb`.`Personas` WHERE `DNI` = " + this.dni + ";";
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al eliminar los datos de la Persona: " + e.getMessage());
-        }
+    public void eliminar(){
+        this.retornoClaveNumerica=this.dni;
+        super.eliminar();
     }
 
     /**
-     * Registra la persona en la base de datos con los registros de la clase.
+     * Inserta la persona en la base de datos con los registros de la clase.
       */
     public void insertar() {
         String consulta="INSERT INTO `mydb`.`Personas` (`DNI`, `Nombre`, `Apellido`, `Legajo`, `Correo Electronico`, `Telefono`, `Equipo de Trabajo`, `Area`, `Gerencia`)\n" +
                 "VALUES ("+this.dni+",'"+this.nombre+"','"+this.apellido+"',"+this.legajo+",'"+this.correo+"','"+this.telefono+"','"+this.equipo+"','"+this.area+"','"+this.gerencia+"'\n);";
-        System.out.println(consulta);
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al insertar los datos de la Persona: " + e.getMessage());
-        }
+        super.insertar(consulta);
     }
 
     /**
@@ -219,22 +202,14 @@ public class Persona {
                 "    `Area` = '"+this.area+"',\n" +
                 "    `Gerencia` = '"+this.gerencia+"'\n" +
                 "WHERE `DNI` = "+this.dni+";";
-        System.out.println(consulta);
-
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al actualizar los datos de la Persona: " + e.getMessage());
-        }
+        super.actualizar(consulta);
     }
 
     /**
      * Lista usuarios de la tabla Persona
      * @param tblDatos
      */
-    public static void listarPersonas(JTable tblDatos) {
+    public static void listar(JTable tblDatos) {
         String[] columnNames = {"ID",
                 "DNI",
                 "Nombre",

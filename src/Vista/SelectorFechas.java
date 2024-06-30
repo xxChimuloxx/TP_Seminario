@@ -204,6 +204,6 @@ public class SelectorFechas extends JDialog {
         parent.setVisible(true);
 
         String selectedDate = SelectorFechas.showDialog(parent);
-        System.out.println("Fecha seleccionada: " + selectedDate);
+        //System.out.println("Fecha seleccionada: " + selectedDate);
     }
 }

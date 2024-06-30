@@ -1,4 +1,6 @@
-package Modelo;
+package Modelo.ObjetosPersistentes;
+
+import Modelo.ConexionMySQL;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -12,7 +14,7 @@ import java.util.List;
 /**
  * Clase que permite representar una campania publicitaria segun las necesidades del area de marketing.
  */
-public class Campania {
+public class Campania extends ObjetoPersistente{
     private int id;
     private String nombre;
     private String sinopsis;
@@ -26,8 +28,21 @@ public class Campania {
      * Constructor simplificado de la clase, recupera la informacion desde la base de datos.
      * @param id
      */
-    public Campania(int id){
-//        this.id = id;
+    public Campania(int id) {
+        this.queryClave = "id";
+        this.queryBase = "campania";
+
+        this.claveNumerica = true;
+        this.claveIndex = 1;
+
+        selectQuery(id);
+    }
+
+    /**
+     * Busca y Actualiza los datos del objeto con la informacion recuperada de la base de datos.
+     * @param id
+     */
+    public void selectQuery(int id){
         String consulta="SELECT * FROM mydb.campania WHERE ID="+id;
 
         try {
@@ -51,26 +66,14 @@ public class Campania {
     }
 
     /**
-     * verifica que existe la campaña en la base de datos.
+     * verifica que existe el elemento en la base de datos.
      * @param id
      * @return
      */
-    public boolean existeCampania(int id){
-        boolean retorno = false;
-        String consulta="SELECT * FROM mydb.campania WHERE ID="+id;
-
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            ResultSet resultado=sentencia.executeQuery(consulta);
-
-            if (resultado.next()){
-                this.id = resultado.getInt(1);
-                retorno = true;
-            }
-            //ConexionMySQL.cerrar();
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al validar la existencia de la Campaña: " + e.getMessage());
+    public boolean existe(int id){
+        boolean retorno = super.existe(id);
+        if(retorno){
+            this.id = this.retornoClaveNumerica;
         }
         return retorno;
     }
@@ -79,7 +82,7 @@ public class Campania {
      * Metodo que lista todas las campañas de la base de datos y las devuelve en una JTable.
      * @param tblDatos
      */
-    public static void listarCampanias(JTable tblDatos) {
+    public static void listar(JTable tblDatos) {
         String[] columnNames = {"ID",
                 "Nombre de la campañia",
                 "Sinopsis",
@@ -191,31 +194,18 @@ public class Campania {
     /**
      * Metodo que elimina la campaña de la base de datos.
      */
-    public void eliminar() {
-        String consulta="DELETE FROM `mydb`.`Campania` WHERE `ID` = " + this.id + ";";
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al eliminar los datos de la Persona: " + e.getMessage());
-        }
+    public void eliminar(){
+        this.retornoClaveNumerica=this.id;
+        super.eliminar();
     }
 
     /**
-     * Registra la campaña en la base de datos con los registros de la clase.
+     * Inserta la campaña en la base de datos con los registros de la clase.
      */
     public void insertar() {
         String consulta="INSERT INTO `mydb`.`Campania` (`Nombre`, `Sinopsis`, `Descripcion`, `Vigente`, `Fecha Inicio Vigencia`, `Fecha Fin Vigencia`, `LINK`)\n" +
                 "VALUES ('"+this.nombre+"','"+this.sinopsis+"','"+this.descripcion+"',"+this.vigente+",'"+this.fechaDesde+"','"+this.fechaHasta+"','"+this.link+"'\n);";
-        System.out.println(consulta);
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al insertar los datos de la Campaña: " + e.getMessage());
-        }
+        super.insertar(consulta);
     }
 
     /**
@@ -231,15 +221,7 @@ public class Campania {
                 "    `Fecha Fin Vigencia` = '"+this.fechaHasta+"',\n" +
                 "    `LINK` = '"+this.link+"'\n" +
                 "WHERE `ID` = "+this.id+";";
-        System.out.println(consulta);
-
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al actualizar los datos de la Campaña: " + e.getMessage());
-        }
+        super.actualizar(consulta);
     }
 
     //**********************************************************************************************************//

@@ -1,7 +1,7 @@
 package Controlador.Raices;
 
 import Modelo.CodigoQR;
-import Modelo.Item;
+import Modelo.ObjetosPersistentes.Item;
 import Vista.Dialogos;
 import Vista.VistaItem;
 import com.google.zxing.WriterException;
@@ -57,7 +57,7 @@ public class ControladorItem {
         this.item = new Item(ID);
         actualizarVistaDatosItem();
 
-        System.out.println(modo);
+        //System.out.println(modo);
         if (modo == this.MODO_EDICION){
             vista.habilitarEdicion();
         }
@@ -129,14 +129,14 @@ public class ControladorItem {
 
             this.item.setId(this.ID);
 
-            if(this.item.existeItem(this.item.getId())){
+            if(this.item.existe(this.item.getId())){
                 this.item.actualizar();
             }
             else{
                 this.item.insertar();
                 //cruce contra la tabla campania, verifico.
                 Item itemAuxiliar = new Item(this.ID);
-                if(!itemAuxiliar.existeItem(this.ID)){
+                if(!itemAuxiliar.existe(this.ID)){
                     itemAuxiliar.setDescripcion(this.vista.getTxtDescripcion());
                     itemAuxiliar.setMarca(this.vista.getTxtMarca());
                     itemAuxiliar.setModelo(this.vista.getTxtModelo());

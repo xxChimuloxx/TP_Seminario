@@ -1,9 +1,9 @@
 package Vista;
 
-import Modelo.Campania;
-import Modelo.Item;
-import Modelo.Persona;
-import Modelo.Usuario;
+import Modelo.ObjetosPersistentes.Campania;
+import Modelo.ObjetosPersistentes.Item;
+import Modelo.ObjetosPersistentes.Persona;
+import Modelo.ObjetosPersistentes.Usuario;
 
 import javax.swing.*;
 import java.awt.*;

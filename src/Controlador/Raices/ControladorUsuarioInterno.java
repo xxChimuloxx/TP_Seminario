@@ -1,11 +1,11 @@
 package Controlador.Raices;
 
 import Controlador.ControladorLogon;
-import Modelo.Usuario;
+import Modelo.ObjetosPersistentes.Usuario;
 import Vista.Dialogos;
 import Vista.VistaUsuarioInterno;
 
-import Modelo.Persona;
+import Modelo.ObjetosPersistentes.Persona;
 import Modelo.CodigoQR;
 import com.google.zxing.WriterException;
 
@@ -64,7 +64,7 @@ public class ControladorUsuarioInterno {
         this.persona = new Persona(userID);
         actualizarVistaDatosPersona();
 
-        System.out.println(modo);
+        //System.out.println(modo);
         if (modo == this.MODO_EDICION){
             vista.habilitarEdicion();
         }
@@ -146,14 +146,14 @@ public class ControladorUsuarioInterno {
             this.persona.setGerencia(this.vista.getTxtGerencia());
 
             this.persona.setDni((int)Integer.parseInt(this.vista.getTxtDNI()));
-            if(this.persona.existePersona(this.persona.getDni())){
+            if(this.persona.existe(this.persona.getDni())){
                 this.persona.actualizar();
             }
             else{
                 this.persona.insertar();
                 //cruce contra la tabla usuario, verifico.
                 Usuario usuarioAuxiliar = new Usuario(String.valueOf(this.persona.getDni()));
-                if(!usuarioAuxiliar.existeUsuario()){
+                if(!usuarioAuxiliar.existe()){
                     usuarioAuxiliar.setUserID(String.valueOf(this.persona.getDni()));
                     usuarioAuxiliar.setPassword(String.valueOf(this.persona.getDni()));
                     usuarioAuxiliar.setDescripcion(this.persona.getNombre()+" "+this.persona.getApellido());
@@ -189,7 +189,7 @@ public class ControladorUsuarioInterno {
             break;
         default:
             // Si el usuario cierra el diálogo sin seleccionar ninguna opción
-            System.out.println("Ninguna opción seleccionada.");
+            Dialogos.advertencia("Ninguna opción seleccionada.",this.vista);
         }
         CodigoQR.registrarQR(this.persona.getDni(),CodigoQR.CONSTANTE_TIPO_PERSONA);
     }

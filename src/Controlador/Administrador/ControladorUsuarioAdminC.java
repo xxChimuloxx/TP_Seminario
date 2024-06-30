@@ -2,7 +2,7 @@ package Controlador.Administrador;
 
 import Controlador.Raices.ControladorCampania;
 import Controlador.Raices.ControladorUsuarioInterno;
-import Modelo.Campania;
+import Modelo.ObjetosPersistentes.Campania;
 import Vista.Dialogos;
 import Vista.VistaAdministrador;
 import Vista.VistaCampania;
@@ -130,7 +130,7 @@ public class ControladorUsuarioAdminC implements ControladorInterfaz {
      * @param tblDatos
      */
     public void cargarTabla(JTable tblDatos) {
-        Campania.listarCampanias(tblDatos);
+        Campania.listar(tblDatos);
     }
 
     /**

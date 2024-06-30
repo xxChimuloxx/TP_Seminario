@@ -1,9 +1,7 @@
 package Controlador;
 
-import Modelo.Usuario;
+import Modelo.ObjetosPersistentes.Usuario;
 import Vista.*;
-
-import java.nio.channels.Selector;
 
 /**
  * Clase utilizada para controlar las operaciones y acciones del proceso de logon al aplicativo.

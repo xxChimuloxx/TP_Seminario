@@ -330,7 +330,7 @@ public class VisorGraficoBarras implements Mostrable {
                 v = new VistaAdministrador(VistaAdministrador.VISTA_ITEMS,false);
                 break;
             default:
-                System.out.println("Opción no válida");
+                Dialogos.advertencia("Opcion no disponible.",null);
                 break;
         }
     }

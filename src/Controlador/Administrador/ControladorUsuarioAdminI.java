@@ -3,7 +3,7 @@ package Controlador.Administrador;
 import Controlador.Raices.ControladorCampania;
 import Controlador.Raices.ControladorUsuarioInterno;
 import Modelo.CodigoQR;
-import Modelo.Item;
+import Modelo.ObjetosPersistentes.Item;
 import Vista.Dialogos;
 import Vista.VistaAdministrador;
 import Vista.VistaItem;
@@ -121,7 +121,7 @@ public class ControladorUsuarioAdminI implements ControladorInterfaz {
      * @param tblDatos
      */
     public void cargarTabla(JTable tblDatos) {
-        Item.listarItems(tblDatos);
+        Item.listar(tblDatos);
     }
 
     /**

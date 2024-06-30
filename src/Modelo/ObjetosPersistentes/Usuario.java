@@ -1,4 +1,6 @@
-package Modelo;
+package Modelo.ObjetosPersistentes;
+
+import Modelo.ConexionMySQL;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -12,7 +14,7 @@ import java.util.Objects;
  * Clase que se usa para representar un usuario segun el enfoque del area de seguridad.
  * Un usuario registrado, debe tambien existir en la tabla de personas.
  */
-public class Usuario {
+public class Usuario extends ObjetoPersistente{
 
     private String userID;
     private String password;
@@ -30,12 +32,16 @@ public class Usuario {
      * @param tipo
      */
     public Usuario(String userID, String password, String descripcion, Integer tipo){
+        setearValoresHerencia();
+
         this.userID = userID;
         this.password = password;
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.intentos = 0;
         this.estado = 1;
+
+        selectQuery(Integer.parseInt(userID));
     }
 
     /**
@@ -43,7 +49,16 @@ public class Usuario {
      * @param userID
      */
     public Usuario(String userID){
-        this.userID = userID;
+        setearValoresHerencia();
+        selectQuery(Integer.parseInt(userID));
+    }
+
+    /**
+     * Busca y Actualiza los datos del objeto con la informacion recuperada de la base de datos.
+     * @param id
+     */
+    public void selectQuery(int id){
+        this.userID = String.valueOf(id);
         String consulta="SELECT * FROM mydb.usuarios WHERE UserID="+userID;
 
         try {
@@ -65,6 +80,17 @@ public class Usuario {
     }
 
     /**
+     * Metodo interno para setear valores necesarios para la interaccion con el padre.
+     */
+    public void setearValoresHerencia(){
+        this.queryClave = "UserID";
+        this.queryBase = "usuarios";
+
+        this.claveNumerica = true;
+        this.claveIndex = 1;
+    }
+
+    /**
      * actualiza el usuario con los datos cargados
      */
     public void actualizar() {
@@ -76,22 +102,14 @@ public class Usuario {
                 "    `Intentos` = "+this.intentos+",\n" +
                 "    `Estado` = "+this.estado+"\n" +
                 "WHERE `UserID` = "+this.userID+";";
-        System.out.println(consulta);
-
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al actualizar informacion en la base de datos: " + e.getMessage());
-        }
+        super.actualizar(consulta);
     }
 
     /**
      * lista las personas de la base de datos. todas las definiciones.
      * @param tblDatos
      */
-    public static void listarPersonas(JTable tblDatos) {
+    public static void listar(JTable tblDatos) {
             String[] columnNames = {"UserID",
                     "Password",
                     "Descripcion",
@@ -133,55 +151,30 @@ public class Usuario {
     }
 
     /**
-     * elimina los datos definidos en la clase en la base de datos de usuarios
+     * Metodo que elimina la campaña de la base de datos.     *
      */
-    public void eliminar() {
-        String consulta="DELETE FROM `mydb`.`Usuarios` WHERE `UserID` = " + this.userID + ";";
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al eliminar elemento de la base de datos: " + e.getMessage());
-        }
+    public void eliminar(){
+        this.retornoClaveNumerica=Integer.valueOf(this.userID);
+        super.eliminar();
     }
 
     /**
-     * inserta los datos definidos en la clase en la base de datos de usuarios
+     * Inserta los datos definidos en la clase en la base de datos de usuarios
      */
     public void insertar() {
         String consulta="INSERT INTO `mydb`.`Usuarios` (`UserID`, `Password`, `Descripcion`, `Tipo`, `Intentos`, `Estado`)\n" +
                 "VALUES ("+this.userID+",'"+this.password+"','"+this.descripcion+"',"+this.tipo+","+this.intentos+","+this.estado+"\n);";
-        //System.out.println(consulta);
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al insertar elemento en la base de datos: " + e.getMessage());
-        }
+        super.insertar(consulta);
     }
 
     /**
-     * valida si existe el usuario this.userID
-     * @return verdadero o falso segun corresponda
+     * verifica que existe el elemento en la base de datos.
+     * @return
      */
-    public boolean existeUsuario() {
-        boolean retorno = false;
-
-        String consulta="SELECT * FROM mydb.usuarios WHERE UserID="+this.userID;
-
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            ResultSet resultado=sentencia.executeQuery(consulta);
-
-            if (resultado.next()){
-                this.userID = resultado.getString (1);
-                retorno = true;
-            }
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al recuperar elemento de la base de datos: " + e.getMessage());
+    public boolean existe(){
+        boolean retorno = super.existe(Integer.valueOf(this.userID));
+        if(retorno){
+            this.userID = this.retornoClaveAlfa;
         }
         return retorno;
     }
@@ -196,7 +189,7 @@ public class Usuario {
         Boolean retorno = false;
         String consulta="SELECT * FROM mydb.usuarios WHERE UserID="+userID;
 
-        System.out.println(consulta);
+        //System.out.println(consulta);
         try {
             Statement sentencia= ConexionMySQL.obtener().createStatement();
             ResultSet resultado=sentencia.executeQuery(consulta);
@@ -262,7 +255,7 @@ public class Usuario {
         String consulta="UPDATE mydb.Usuarios\n" +
                 "SET `Estado` = 0\n" +
                 "WHERE `UserID` = "+userID;
-        System.out.println(consulta);
+        //System.out.println(consulta);
         try {
             Statement sentencia= ConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);
@@ -281,7 +274,7 @@ public class Usuario {
                 "SET `Estado` = 1,\n" +
                 "    `Intentos`= 0\n" +
                 "WHERE `UserID` = "+userID;
-        System.out.println(consulta);
+        //System.out.println(consulta);
         try {
             Statement sentencia= ConexionMySQL.obtener().createStatement();
             sentencia.executeUpdate(consulta);

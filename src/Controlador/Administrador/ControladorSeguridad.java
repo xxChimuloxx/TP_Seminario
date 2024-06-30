@@ -1,8 +1,8 @@
 package Controlador.Administrador;
 
 import Controlador.Raices.ControladorUsuarios;
-import Modelo.Persona;
-import Modelo.Usuario;
+import Modelo.ObjetosPersistentes.Persona;
+import Modelo.ObjetosPersistentes.Usuario;
 import Vista.*;
 
 import javax.swing.*;
@@ -127,7 +127,7 @@ public class ControladorSeguridad implements ControladorInterfaz {
      * @param tblDatos
      */
     public void cargarTabla(JTable tblDatos) {
-        Usuario.listarPersonas(tblDatos);
+        Usuario.listar(tblDatos);
 
     }
 

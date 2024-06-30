@@ -1,4 +1,6 @@
-package Modelo;
+package Modelo.ObjetosPersistentes;
+
+import Modelo.ConexionMySQL;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -12,7 +14,7 @@ import java.util.List;
 /**
  * Clase que representa un item o componente del area de gestion de activos.
  */
-public class Item {
+public class Item extends ObjetoPersistente{
     private int id;
     private String descripcion;
     private String marca;
@@ -23,7 +25,20 @@ public class Item {
      * @param id
      */
     public Item(int id){
-//        this.id = id;
+        this.queryClave = "id";
+        this.queryBase = "item";
+
+        this.claveNumerica = true;
+        this.claveIndex = 1;
+
+        selectQuery(id);
+    }
+
+    /**
+     * Busca y Actualiza los datos del objeto con la informacion recuperada de la base de datos.
+     * @param id
+     */
+    public void selectQuery(int id){
         String consulta="SELECT * FROM mydb.item WHERE ID="+id;
 
         try {
@@ -43,26 +58,14 @@ public class Item {
     }
 
     /**
-     * Metodo que permite verificar si existe el Item en la base de datos.
+     * verifica que existe el elemento en la base de datos.
      * @param id
      * @return
      */
-    public boolean existeItem(int id){
-        boolean retorno = false;
-        String consulta="SELECT * FROM mydb.item WHERE ID="+id;
-
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            ResultSet resultado=sentencia.executeQuery(consulta);
-
-            if (resultado.next()){
-                this.id = resultado.getInt(1);
-                retorno = true;
-            }
-            //ConexionMySQL.cerrar();
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al validar la existencia del Item: " + e.getMessage());
+    public boolean existe(int id){
+        boolean retorno = super.existe(id);
+        if(retorno){
+            this.id = this.retornoClaveNumerica;
         }
         return retorno;
     }
@@ -71,7 +74,7 @@ public class Item {
      * Lista los elementos de la base de datos y devuelve una JTable.
      * @param tblDatos
      */
-    public static void listarItems(JTable tblDatos) {
+    public static void listar(JTable tblDatos) {
         String[] columnNames = {"ID",
                 "Descripcion",
                 "Marca",
@@ -141,33 +144,20 @@ public class Item {
     }
 
     /**
-     * Metodo que elimina el componente de la base de datos.
+     * Metodo que elimina la campaña de la base de datos.     *
      */
-    public void eliminar() {
-        String consulta="DELETE FROM `mydb`.`Item` WHERE `ID` = " + this.id + ";";
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al eliminar los datos del Item: " + e.getMessage());
-        }
+    public void eliminar(){
+        this.retornoClaveNumerica=this.id;
+        super.eliminar();
     }
 
     /**
-     * Registra el item en la base de datos con los registros de la clase.
+     * Inserta el item en la base de datos con los registros de la clase.
      */
     public void insertar() {
         String consulta="INSERT INTO `mydb`.`Item` (`Descripcion`, `Marca`, `Modelo`)\n" +
                 "VALUES ('"+this.descripcion+"','"+this.marca+"','"+this.modelo+"'\n);";
-        System.out.println(consulta);
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al insertar los datos del Item: " + e.getMessage());
-        }
+        super.insertar(consulta);
     }
 
     /**
@@ -179,15 +169,7 @@ public class Item {
                 "    `Marca` = '"+this.marca+"',\n" +
                 "    `Modelo` = '"+this.modelo+"'\n" +
                 "WHERE `ID` = "+this.id+";";
-        System.out.println(consulta);
-
-        try {
-            Statement sentencia= ConexionMySQL.obtener().createStatement();
-            sentencia.executeUpdate(consulta);
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            //e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al actualizar los datos del Item: " + e.getMessage());
-        }
+       super.actualizar(consulta);
     }
 
     //**********************************************************************************************************//

@@ -1,7 +1,7 @@
 package Controlador.Raices;
 
-import Modelo.Persona;
-import Modelo.Usuario;
+import Modelo.ObjetosPersistentes.Persona;
+import Modelo.ObjetosPersistentes.Usuario;
 import Vista.*;
 
 /**
@@ -47,7 +47,7 @@ public class ControladorUsuarios {
         this.usuario = new Usuario(String.valueOf(clave));
         if(clave!=-1){actualizarVistaDatosUsuario();}
 
-        System.out.println(modo);
+        //System.out.println(modo);
         if (modo == this.MODO_EDICION){
             vista.habilitarEdicion();
         }
@@ -87,15 +87,14 @@ public class ControladorUsuarios {
             this.usuario.setIntentos(Integer.valueOf(this.vista.getTxtIntentos()));
             this.usuario.setEstado(this.vista.getEstado());
 
-            if(this.usuario.existeUsuario()){
+            if(this.usuario.existe()){
                 this.usuario.actualizar();
             }
             else{
                 this.usuario.insertar();
-                System.out.println("PASE!");
                 //cruce contra la tabla usuario, verifico.
                 Persona personaAuxiliar = new Persona(Integer.valueOf(this.usuario.getUserID()));
-                if(!personaAuxiliar.existePersona(Integer.valueOf(this.usuario.getUserID()))){
+                if(!personaAuxiliar.existe(Integer.valueOf(this.usuario.getUserID()))){
                     personaAuxiliar.setDni(Integer.valueOf(this.usuario.getUserID()));
                     personaAuxiliar.setNombre("a completar");
                     personaAuxiliar.setApellido("a completar");

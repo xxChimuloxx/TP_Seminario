@@ -1,8 +1,8 @@
 package Controlador.Administrador;
 
 import Controlador.Raices.ControladorUsuarioInterno;
-import Modelo.Persona;
-import Modelo.Usuario;
+import Modelo.ObjetosPersistentes.Persona;
+import Modelo.ObjetosPersistentes.Usuario;
 import Vista.*;
 
 import javax.swing.*;
@@ -113,7 +113,7 @@ public class ControladorUsuarioAdminP implements ControladorInterfaz {
      * @param tblDatos
      */
     public void cargarTabla(JTable tblDatos) {
-        Persona.listarPersonas(tblDatos);
+        Persona.listar(tblDatos);
     }
 
     /**
