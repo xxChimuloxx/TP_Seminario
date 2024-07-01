@@ -24,7 +24,7 @@ public class ControladorSelector {
      * @param args
      */
     public static void main(String[] args) {
-        VistaSelector v = new VistaSelector(1,1,0,1,1,"Jose",-1);
+        VistaSelector v = new VistaSelector(1,1,1,1,1,"Jose",-1);
     }
 
     //Controlador de acciones de los botones
