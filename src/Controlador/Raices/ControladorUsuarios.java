@@ -88,6 +88,7 @@ public class ControladorUsuarios {
             this.usuario.setEstado(this.vista.getEstado());
 
             if(this.usuario.existe()){
+                this.usuario.setUserID(this.vista.getTxtUserID());
                 this.usuario.actualizar();
             }
             else{

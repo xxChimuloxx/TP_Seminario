@@ -102,6 +102,7 @@ public class Usuario extends ObjetoPersistente{
                 "    `Intentos` = "+this.intentos+",\n" +
                 "    `Estado` = "+this.estado+"\n" +
                 "WHERE `UserID` = "+this.userID+";";
+        System.out.println(consulta);
         super.actualizar(consulta);
     }
 
