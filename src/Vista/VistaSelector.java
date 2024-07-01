@@ -107,14 +107,14 @@ public class VistaSelector extends JFrame implements ActionListener {
         menuDocumentacion.setMnemonic('D');
 
         // Crear y agregar elementos del menú "DOCUMENTACION"
-        String[] entregables = {"JavaDoc","TP 1", "TP 2", "TP 3", "TP 4","Video Presentacion"};
+        String[] entregables = {"JavaDoc","TP 1", "TP 2", "TP 3", "TP 4",".SQL"};
         String[] links = {
-                "http://www.example1.com",
-                "http://www.example2.com",
-                "http://www.example3.com",
-                "http://www.example3.com",
-                "http://www.example3.com",
-                "http://www.example4.com"
+                "https://drive.google.com/drive/folders/1dH340-tXh4UVfTENC0bMSRUbQuERKM4j?usp=sharing",
+                "https://drive.google.com/file/d/1njS8NTEm4raceJhoZFI14346deJdyjOO/view?usp=sharing",
+                "https://drive.google.com/file/d/1OT_8cpHNFmxtOdNCu12txxdllBNfg8x3/view?usp=sharing",
+                "https://drive.google.com/file/d/1l_w9h7wN5GyGbBApBI3b-QeMf6My4HEW/view?usp=sharing",
+                "https://drive.google.com/file/d/1yi_09lVHVH8joOluwH8iMqOGutyTbSd6/view?usp=sharing",
+                "https://drive.google.com/drive/folders/10N-gnEfwee4j1tCXYM2q__5HSFi9x4MJ?usp=sharing"
         };
 
         for (int i = 0; i < entregables.length; i++) {
